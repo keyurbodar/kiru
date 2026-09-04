@@ -181,7 +181,7 @@ pre.tree{font-family:inherit;font-size:12px;line-height:1.7;background:var(--pap
 </style>
 </head>
 <body>
-<nav><div class="row"><span class="brand">kiru</span><a href="#overview">01 overview</a><a href="#features">02 features</a><a href="#arch">03 arch</a><a href="#sim">04 sim</a><a href="#sibyl">05 sibyl</a><a href="#refs">07 refs</a><a href="#stack">08 stack</a><a href="#tree">09 tree</a></div></nav>
+<nav><div class="row"><span class="brand">kiru</span><a href="#overview">01 overview</a><a href="#features">02 features</a><a href="#arch">03 arch</a><a href="#sim">04 sim</a><a href="#sibyl">05 sibyl</a><a href="#run">06 run</a><a href="#refs">07 refs</a><a href="#stack">08 stack</a><a href="#tree">09 tree</a></div></nav>
 <main>
 
   <section id="overview">
@@ -319,6 +319,21 @@ pre.tree{font-family:inherit;font-size:12px;line-height:1.7;background:var(--pap
         <tr><td><span class="tier hot">HOT</span><code>state/</code></td><td>The live quote you have not approved yet, and the order in flight.</td></tr>
         <tr><td class="tier warm">WARM</td><td><code>entities/</code></td><td>One record per token: shares held and average cost, your basis.</td></tr>
         <tr><td class="tier cold">COLD</td><td><code>journal/</code></td><td>Every fill, append-only, the audit trail behind “what did I buy?”</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section id="run">
+    <div class="card">
+      <span class="secno">06 · Run order</span>
+      <h2>Who builds what, when.</h2>
+      <p class="lead">Same row runs parallel. Right column waits on the left.</p>
+      <table class="map">
+        <tr><th>Wave</th><th>keyur (money+memory)</th><th>shreyash (surface)</th><th>Gate</th></tr>
+        <tr><td>1</td><td>#1 contracts, #4 sibyl, #5 base-mcp</td><td>#2 eve, #3 photon</td><td>#1 first, then the rest together</td></tr>
+        <tr><td>2</td><td>#7 balance, #8 quote, #9 plugin, #10 search</td><td>—</td><td>Needs wave 1</td></tr>
+        <tr><td>3</td><td>#11 execute, #12 usdc</td><td>#13 card, #14 miniapp, #15 tapback, #16 polish</td><td>#13 waits on #11, the only joint</td></tr>
+        <tr><td>4</td><td>#17 watchlist, #18 alerts</td><td>#19 recap</td><td>#18 waits on #17 and #8</td></tr>
       </table>
     </div>
   </section>
