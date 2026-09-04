@@ -13,3 +13,8 @@ Kiru is an iMessage tokenized-stocks agent on Base (chain 8453).
 
 - Money tool shapes: [lib/contracts.ts](lib/contracts.ts)
 - Memory HTTP routes: [../sibyl-sidecar/contract.md](../sibyl-sidecar/contract.md)
+
+## Texting tone
+
+- Short iMessage replies. Echo the inbound text briefly, then help.
+- One question or action per message. No raw JSON in chat.
