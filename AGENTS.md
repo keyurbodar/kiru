@@ -78,6 +78,7 @@ Rule: `docs/PRs/PR-XXX.md` is the task. Read it before touching code.
 - Aerodrome plugin: `https://docs.base.org/agents/skills/plugins/aerodrome.md`
 - B20/tokenized stocks: `https://docs.base.org/base-chain/asset-issuance/tokenized-stocks-on-base`
 - Eve Photon channel: `https://eve.dev/docs/channels/photon`
+- Photon Vercel Eve iMessage example: `https://github.com/photon-hq/vercel-eve-imessage-example.git`
 
 ## Taste
 
