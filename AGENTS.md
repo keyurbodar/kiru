@@ -6,14 +6,17 @@ Sibyl remembers everything. User keeps custody; the agent never holds keys.
 
 ## What makes Kiru special?
 
-1. **The venue is the price.** No parallel feed: Aerodrome quotes via Sugar
-   CLI are the price display, the route, and the calldata. Dry-run is a quote.
+1. **The venue is the price.** No parallel feed: Uniswap routing API quotes
+  are the price display, the route, and the calldata. Dry-run is a quote.
 2. **Approval is the interface.** Every write returns `approvalUrl`; the user
    taps approve in chat, Eve polls status. No signature, no fill, ever.
 3. **Memory is the moat.** Sibyl tiers per phone: HOT pending quote, WARM
    positions/basis/thesis, COLD fills journal. Amnesiac bot = no product.
 4. **Fail closed.** No pool, restricted region, or missing approval: refuse in
-   chat, never guess.
+  chat, never guess.
+5. **Sibyl is the only memory.** Positions, basis, quotes, fills live in the
+  sidecar per phone. Never adopt Eve memory files or channel state; two
+  memories means no memory.
 
 ## A note from me
 
