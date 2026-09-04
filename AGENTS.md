@@ -15,7 +15,7 @@ Sibyl remembers everything. User keeps custody; the agent never holds keys.
 4. **Fail closed.** No pool, restricted region, or missing approval: refuse in
    chat, never guess.
 
-## A note from Keyur
+## A note from me
 
 Small focused PRs or it doesn't ship. Past ~20 minutes, split it. Done means
 proven over the real path (a dry-run quote, a polled approval), not reasoned
@@ -83,8 +83,17 @@ Rule: the issue brief is the task. Read it before touching code.
 - Work from the issue. Branch per issue id (`pr-008-aerodrome-quote`),
   conventional commits, squash-merge in wave order honoring Depends.
 - On merge: close the issue.
-- Never make a GitHub PR unless Keyur asks. Never push to `main` directly.
+- Never make a GitHub PR unless I ask. Never push to `main` directly.
 
+## Issues are a draft
+
+- You have full autonomy over issues: update bodies, add new issues and PRs,
+  remove ones that stop making sense.
+- Architecture and feature decisions may change mid-build. When that happens,
+  discuss with me first, then implement the real best solution. Never build
+  just because the upfront plan says so.
+- A better or faster method than planned: stop, breathe, and suggest the
+  option before continuing.
 ## References (read these, not the world)
 
 - Issues list (queue; briefs live in the issue bodies): `https://github.com/keyurbodar/kiru/issues`, `plan.html` sections 08 and 09 (stack + tree).
@@ -113,6 +122,7 @@ Rule: the issue brief is the task. Read it before touching code.
 ## PR Creator
 
 - Re-read your own diff end to end as a zero-knowledge intern: intent match, tests constrain not mirror, flag review items.
+- Run no-comments (`/Users/keyur/.agents/skills/no-comments/`) before every review. Authoring agents defend comments; the sicko does not.
 - No claude, ai, or self references anywhere, including co-author lines.
 - PR bodies are very detailed for senior plus security review: implementation, files, test outputs, todos, context.
 
