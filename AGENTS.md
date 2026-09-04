@@ -66,12 +66,16 @@ Rule: the issue brief is the task. Read it before touching code.
 - Never wait idle for agents.
 - No spawn recursion: subagents do not spawn their own.
 
+## How to work
+
+- Use poteto-mode for every task you run.
+- Skill: `/Users/keyur/.agents/skills/poteto-mode/SKILL.md`.
 ## Verification (behavior, not types)
 
 - Real path only: dry-run quote parses, approval polls to confirmed, memory
   round-trips (remember to recall). No mocks of money paths.
 - Scope checks to the touched tool/route. Never repo-wide suites per change.
-- One venue rule: illiquid pair returns "no quote", never a guessed price.
+- Use /poteto-mode to verify things.
 
 ## PR discipline
 
