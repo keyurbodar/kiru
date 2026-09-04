@@ -121,3 +121,14 @@ about. Response: `{ "ok": true, "event_id": "evt_01", "kind": "fill" }`.
 Failure envelope: `{ "ok": false, "code": "<CAUSE>", "message": "<detail>" }`.
 Unknown `tenant_id` shape, bad tier filter, or oversize body fails closed with
 `ok: false`; the caller refuses in chat rather than guessing.
+
+| Code | When |
+|---|---|
+| `INVALID_JSON` | body is not a JSON object |
+| `MISSING_FIELD` | required field absent or blank |
+| `INVALID_TENANT` | `tenant_id` is not `+` followed by 7 to 15 digits |
+| `INVALID_TIERS` | `tiers` is not a subset of `entity,state,reference,journal` |
+| `INVALID_LIMIT` | `limit` is not an int from 1 to 50 |
+| `INVALID_BODY` | `body` is not a JSON object |
+| `BODY_TOO_LARGE` | body exceeds the byte cap |
+| `NOT_FOUND` | recall key absent (HTTP 200, not an error) |
