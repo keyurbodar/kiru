@@ -45,10 +45,14 @@ export const executeBuyInput = z.object({
   quoteId,
 });
 
+export const executeBuyStatus = z.enum(["confirmed", "declined", "timed_out", "failed"]);
+
 export const executeBuyOutput = z.object({
   quoteId,
   approvalUrl,
   requestId,
+  status: executeBuyStatus,
+  txHash: z.string().nullable(),
 });
 
 export const quoteBuy = {
