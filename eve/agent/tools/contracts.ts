@@ -2,18 +2,19 @@ import { z } from "zod";
 
 export const chainId = 8453 as const;
 
-export const tenantId = z.string().regex(/^\+[1-9]\d{7,14}$/);
+export const tenantId = z.string().regex(/^\+[1-9]\d{1,14}$/);
 export const tokenSymbol = z.string().min(1).max(16);
 export const usdcAmount = z.string().regex(/^\d+(\.\d{1,6})?$/);
+export const positiveUsdc = z.string().regex(/^(?!0+(\.0+)?$)\d+(\.\d{1,6})?$/);
 export const tokenAmount = z.string().regex(/^\d+(\.\d{1,8})?$/);
 export const quoteId = z.string().min(1).max(64);
-export const approvalUrl = z.string().url();
+export const approvalUrl = z.string().url().regex(/^https:\/\//);
 export const requestId = z.string().min(1).max(128);
 
 export const quoteBuyInput = z.object({
   tenantId,
   token: tokenSymbol,
-  usdcAmount,
+  usdcAmount: positiveUsdc,
 });
 
 export const quoteBuyOutput = z.object({

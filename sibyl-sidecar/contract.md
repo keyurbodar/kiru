@@ -6,6 +6,10 @@ scopes every read and write. Amounts that cross into Eve money tools settle in
 USDC on Base chain 8453; memory itself never moves money. Writes that start an
 order return no fill: the fill arrives later through the Base MCP `approvalUrl`
 flow and is polled with `get_request_status`, never inferred from a tap.
+The sidecar takes no public ingress: only the Eve agent calls it, and Eve sets
+`tenant_id` from the verified Photon sender. A body `tenant_id` from any other
+caller is untrusted by construction, so cross-tenant reads and writes cannot
+arrive over the wire.
 
 ## Tier mapping
 
