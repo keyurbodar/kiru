@@ -23,7 +23,7 @@ Spec source: the issue brief. The brief is the task; this file is the workflow.
 ## Reviews
 
 - Other lane reviews: Keyur's PRs reviewed by Shreyash and vice versa.
-- Approve only when every Acceptance box in the brief is checked. Request changes otherwise — no drive-by merges.
+- Approve only when every Acceptance box in the brief is checked. Request changes otherwise. No drive-by merges.
 
 ## Lanes
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kiru — text to own stocks</title>
+<title>Kiru: text to own stocks</title>
 <style>
 ::root{
   --paper:#242424;
@@ -181,14 +181,14 @@ pre.tree{font-family:inherit;font-size:12px;line-height:1.7;background:var(--pap
 </style>
 </head>
 <body>
-<nav><div class="row"><span class="brand">kiru</span><a href="#overview">01 overview</a><a href="#features">02 features</a><a href="#arch">03 arch</a><a href="#sim">04 sim</a><a href="#sibyl">05 sibyl</a><a href="#refs">07 refs</a><a href="#stack">08 stack</a><a href="#tree">09 tree</a></div></nav>
+<nav><div class="row"><span class="brand">kiru</span><a href="#overview">01 overview</a><a href="#features">02 features</a><a href="#arch">03 arch</a><a href="#sim">04 sim</a><a href="#sibyl">05 sibyl</a><a href="#run">06 run</a><a href="#refs">07 refs</a><a href="#stack">08 stack</a><a href="#tree">09 tree</a></div></nav>
 <main>
 
   <section id="overview">
     <div class="card">
       <span class="secno">01 · Overview</span>
       <h1>Kiru.</h1>
-      <p class="sub">Buy real tokenized stocks by text message — as easy as texting a friend.</p>
+      <p class="sub">Buy real tokenized stocks by text message, as easy as texting a friend.</p>
       <div class="kicker">
         <span>Real money</span>
         <span>Live price cards</span>
@@ -198,7 +198,7 @@ pre.tree{font-family:inherit;font-size:12px;line-height:1.7;background:var(--pap
       <div class="startbox">
         <div class="lbl">text to start (mock)</div>
         <div class="num">+1 (555) 013-4472</div>
-        <p class="hint">Send “buy $50 of NVDAc” — that’s the whole onboarding.</p>
+        <p class="hint">Send “buy $50 of NVDAc”, that is the whole onboarding.</p>
       </div>
     </div>
   </section>
@@ -211,11 +211,11 @@ pre.tree{font-family:inherit;font-size:12px;line-height:1.7;background:var(--pap
       <ul class="feats">
         <li><b>Text to trade</b>Text a number to buy and sell tokenized stocks with real money.</li>
         <li><b>Live price cards</b>A live price card right in the chat before you commit to anything.</li>
-        <li><b>You approve everything</b>Every order needs your yes — nothing ever moves without it.</li>
-        <li><b>Memory for money</b>Ask “what’s my average cost?” anytime — Kiru remembers your holdings.</li>
+        <li><b>You approve everything</b>Every order needs your yes, nothing ever moves without it.</li>
+        <li><b>Memory for money</b>Ask “what is my average cost?” anytime, Kiru remembers your holdings.</li>
         <li><b>Cash out anytime</b>Cash out to dollars (USDC) whenever you want.</li>
         <li><b>Rich mini-cards</b>Portfolio mini-cards, live in the conversation.</li>
-        <li><b>Right region, right start</b><span class="gate">Outside the US only — eligibility is checked up front.</span></li>
+        <li><b>Right region, right start</b><span class="gate">Outside the US only, eligibility is checked up front.</span></li>
         <li><b>Self-custody</b>Your assets live in your own account, not ours.</li>
       </ul>
     </div>
@@ -225,7 +225,7 @@ pre.tree{font-family:inherit;font-size:12px;line-height:1.7;background:var(--pap
     <div class="card">
       <span class="secno">03 · Architecture</span>
       <h2>One text, whole loop.</h2>
-      <p class="lead">One text travels the whole loop — and your memory travels with it.</p>
+      <p class="lead">One text travels the whole loop, and your memory travels with it.</p>
       <svg class="diagram" viewBox="0 0 720 470" role="img" aria-label="Kiru architecture diagram">
         <defs>
           <marker id="ab" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
@@ -261,22 +261,17 @@ pre.tree{font-family:inherit;font-size:12px;line-height:1.7;background:var(--pap
         <line x1="400" y1="44" x2="428" y2="44" stroke="#B5B5B5" stroke-width="1" marker-end="url(#ab)"/>
         <line x1="560" y1="44" x2="588" y2="44" stroke="#B5B5B5" stroke-width="1" marker-end="url(#ab)"/>
 
-        <!-- second row: quotes + feeds -->
-        <rect x="296" y="140" width="140" height="56" fill="#2E2E2E" stroke="#B5B5B5" stroke-width="1"/>
-        <text class="t" x="366" y="164" text-anchor="middle">1inch</text>
+        <!-- second row: venue quotes -->
+        <rect x="276" y="140" width="180" height="56" fill="#2E2E2E" stroke="#B5B5B5" stroke-width="1"/>
+        <text class="t" x="366" y="164" text-anchor="middle">Aerodrome</text>
         <text class="m" x="366" y="182" text-anchor="middle">quotes · Base 8453</text>
 
-        <rect x="464" y="140" width="176" height="56" fill="#2E2E2E" stroke="#B5B5B5" stroke-width="1"/>
-        <text class="t" x="552" y="164" text-anchor="middle">Chainlink feeds</text>
-        <text class="m" x="552" y="182" text-anchor="middle">total-return · staleness-gated</text>
-
         <line x1="348" y1="72" x2="348" y2="140" stroke="#B5B5B5" stroke-width="1" marker-end="url(#ab)"/>
-        <path d="M 392 100 H 464 V 140" fill="none" stroke="#B5B5B5" stroke-width="1" marker-end="url(#ab)"/>
 
         <!-- sibyl sidecar -->
         <rect x="8" y="280" width="392" height="150" fill="#2E2E2E" stroke="#6C8F6B" stroke-width="1"/>
         <text class="t" x="24" y="306">Sibyl sidecar · Fly · Python</text>
-        <text class="m" x="24" y="326">cli + client + mcp — Eve reads/writes memory here</text>
+        <text class="m" x="24" y="326">cli + client + mcp, Eve reads/writes memory here</text>
         <text class="m" x="24" y="348">HOT state/ -&gt; pending quote + in-progress order</text>
         <text class="m" x="24" y="370">WARM entities/ -&gt; positions + per-token basis</text>
         <text class="m" x="24" y="392">COLD journal/ -&gt; fills history + audit trail</text>
@@ -302,7 +297,7 @@ pre.tree{font-family:inherit;font-size:12px;line-height:1.7;background:var(--pap
     <div class="card">
       <span class="secno">04 · Simulation</span>
       <h2>Watch a trade happen.</h2>
-      <p class="lead">Auto-playing mock of the real thread. No backend — it runs on load.</p>
+      <p class="lead">Auto-playing mock of the real thread. No backend, it runs on load.</p>
       <div class="chat" id="chat" aria-live="polite"></div>
       <div class="simctl"><span id="simstatus">running...</span> <button id="replay" class="textbtn" type="button" hidden>replay</button></div>
     </div>
@@ -316,14 +311,29 @@ pre.tree{font-family:inherit;font-size:12px;line-height:1.7;background:var(--pap
       <table class="map">
         <tr><th>Package</th><th>Job in Kiru</th></tr>
         <tr><td><code>sibyl-memory-cli</code></td><td>Activates the sidecar and manages tiers (<code>init</code>, <code>status</code>, upgrades).</td></tr>
-        <tr><td><code>sibyl-memory-client</code></td><td>The engine itself — local SQLite + full-text search, five-tier schema, no embeddings.</td></tr>
-        <tr><td><code>sibyl-memory-mcp</code></td><td>The contract Eve speaks — every memory read/write goes through this MCP server.</td></tr>
+        <tr><td><code>sibyl-memory-client</code></td><td>The engine itself, local SQLite + full-text search, five-tier schema, no embeddings.</td></tr>
+        <tr><td><code>sibyl-memory-mcp</code></td><td>The contract Eve speaks, every memory read/write goes through this MCP server.</td></tr>
       </table>
       <table class="map">
         <tr><th>Tier</th><th>What Kiru keeps there</th></tr>
-        <tr><td><span class="tier hot">HOT</span><code>state/</code></td><td>The live quote you haven’t approved yet, and the order in flight.</td></tr>
-        <tr><td><span class="tier warm">WARM</span><code>entities/</code></td><td>One record per token: shares held and average cost — your basis.</td></tr>
-        <tr><td><span class="tier cold">COLD</span><code>journal/</code></td><td>Every fill, append-only — the audit trail behind “what did I buy?”</td></tr>
+        <tr><td><span class="tier hot">HOT</span><code>state/</code></td><td>The live quote you have not approved yet, and the order in flight.</td></tr>
+        <tr><td class="tier warm">WARM</td><td><code>entities/</code></td><td>One record per token: shares held and average cost, your basis.</td></tr>
+        <tr><td class="tier cold">COLD</td><td><code>journal/</code></td><td>Every fill, append-only, the audit trail behind “what did I buy?”</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section id="run">
+    <div class="card">
+      <span class="secno">06 · Run order</span>
+      <h2>Who builds what, when.</h2>
+      <p class="lead">Same row runs parallel. Right column waits on the left.</p>
+      <table class="map">
+        <tr><th>Wave</th><th>keyur (money+memory)</th><th>shreyash (surface)</th><th>Gate</th></tr>
+        <tr><td>1</td><td>#1 contracts, #4 sibyl, #5 base-mcp</td><td>#2 eve, #3 photon</td><td>#1 first, then the rest together</td></tr>
+        <tr><td>2</td><td>#7 balance, #8 quote, #9 plugin, #10 search</td><td>—</td><td>Needs wave 1</td></tr>
+        <tr><td>3</td><td>#11 execute, #12 usdc</td><td>#13 card, #14 miniapp, #15 tapback, #16 polish</td><td>#13 waits on #11, the only joint</td></tr>
+        <tr><td>4</td><td>#17 watchlist, #18 alerts</td><td>#19 recap</td><td>#18 waits on #17 and #8</td></tr>
       </table>
     </div>
   </section>
@@ -332,36 +342,35 @@ pre.tree{font-family:inherit;font-size:12px;line-height:1.7;background:var(--pap
     <div class="card">
       <span class="secno">07 · References</span>
       <h2>Source material.</h2>
-      <p class="lead">Source material — link list.</p>
+      <p class="lead">Source material, link list.</p>
       <div class="refgrid">
         <div class="refcat"><h3>Photon</h3>
-          <a href="https://photon.codes/">Photon — bring your agents to iMessage &amp; beyond</a>
-          <a href="https://photon.codes/docs/spectrum-ts/providers/imessage">Photon docs — iMessage provider</a>
-          <a href="https://photon.codes/platform/imessage">Photon platform — iMessage API &amp; mini apps</a>
+          <a href="https://photon.codes/">Photon: bring your agents to iMessage and beyond</a>
+          <a href="https://photon.codes/docs/spectrum-ts/providers/imessage">Photon docs: iMessage provider</a>
+          <a href="https://photon.codes/platform/imessage">Photon platform: iMessage API and mini apps</a>
         </div>
         <div class="refcat"><h3>Eve</h3>
-          <a href="https://vercel.com/changelog/imessage-support-for-eve-agents">Eve changelog — iMessage support via the Photon channel</a>
-          <a href="https://vercel.com/docs/connect/frameworks/eve">Eve docs — deploying Eve agents (Vercel)</a>
-          <a href="https://eve.dev/">Eve — the agent framework</a>
-          <a href="https://github.com/photon-hq/vercel-eve-imessage-example.git">Photon — Vercel Eve iMessage example</a>
+          <a href="https://vercel.com/changelog/imessage-support-for-eve-agents">Eve changelog: iMessage support via the Photon channel</a>
+          <a href="https://vercel.com/docs/connect/frameworks/eve">Eve docs: deploying Eve agents (Vercel)</a>
+          <a href="https://eve.dev/">Eve: the agent framework</a>
+          <a href="https://github.com/photon-hq/vercel-eve-imessage-example.git">Photon: Vercel Eve iMessage example</a>
         </div>
-        <div class="refcat"><h3>Base · tokenized stocks · Chainlink · 1inch</h3>
-          <a href="https://docs.base.org/base-chain/asset-issuance/tokenized-stocks-on-base">Base docs — tokenized stocks guide</a>
-          <a href="https://blog.base.org/tokenized-stocks">Base blog — tokenized stocks are live on Base</a>
-          <a href="https://docs.chain.link/data-feeds/tokenized-equity-feeds/coinbase">Chainlink docs — tokenized equity feeds</a>
-          <a href="https://blog.1inch.com/the-1inch-network-expands-to-base/">1inch blog — expanding to Base</a>
-          <a href="https://1inch.com/blog/post/1inchs-swap-api-now-facilitates-rwas">1inch blog — Swap API for RWAs</a>
+        <div class="refcat"><h3>Base · tokenized stocks · 1inch</h3>
+          <a href="https://docs.base.org/base-chain/asset-issuance/tokenized-stocks-on-base">Base docs: tokenized stocks guide</a>
+          <a href="https://blog.base.org/tokenized-stocks">Base blog: tokenized stocks are live on Base</a>
+          <a href="https://blog.1inch.com/the-1inch-network-expands-to-base/">1inch blog: expanding to Base</a>
+          <a href="https://1inch.com/blog/post/1inchs-swap-api-now-facilitates-rwas">1inch blog: Swap API for RWAs</a>
         </div>
         <div class="refcat"><h3>Base MCP</h3>
-          <a href="https://docs.base.org/ai-agents/quickstart">Base docs — Base MCP quickstart</a>
-          <a href="https://blog.base.org/base-mcp">Base blog — introducing Base MCP</a>
-          <a href="https://github.com/base/skills/blob/master/skills/base-mcp/SKILL.md">base/skills — base-mcp skill</a>
+          <a href="https://docs.base.org/ai-agents/quickstart">Base docs: Base MCP quickstart</a>
+          <a href="https://blog.base.org/base-mcp">Base blog: introducing Base MCP</a>
+          <a href="https://github.com/base/skills/blob/master/skills/base-mcp/SKILL.md">base/skills: base-mcp skill</a>
         </div>
         <div class="refcat wide"><h3>Sibyl</h3>
-          <a href="https://docs.sibyllabs.org/memory/">Sibyl Memory — docs</a>
-          <a href="https://pypi.org/project/sibyl-memory-client/">PyPI — sibyl-memory-client</a>
-          <a href="https://pypi.org/project/sibyl-memory-cli/">PyPI — sibyl-memory-cli</a>
-          <a href="https://pypi.org/project/sibyl-memory-mcp/">PyPI — sibyl-memory-mcp</a>
+          <a href="https://docs.sibyllabs.org/memory/">Sibyl Memory: docs</a>
+          <a href="https://pypi.org/project/sibyl-memory-client/">PyPI: sibyl-memory-client</a>
+          <a href="https://pypi.org/project/sibyl-memory-cli/">PyPI: sibyl-memory-cli</a>
+          <a href="https://pypi.org/project/sibyl-memory-mcp/">PyPI: sibyl-memory-mcp</a>
         </div>
       </div>
     </div>
@@ -377,7 +386,7 @@ pre.tree{font-family:inherit;font-size:12px;line-height:1.7;background:var(--pap
           <thead><tr><th>Layer</th><th>Choice</th><th>Why</th></tr></thead>
           <tbody>
             <tr><td class="title">Runtime</td><td>Eve (TS, Vercel, Photon channel, schedules)</td><td>Least custom code: agent, channel, and cron ship together.</td></tr>
-            <tr><td class="title">Channel</td><td>Photon (cloud iMessage numbers, Mini App cards, SMS fallback)</td><td>Real iMessage numbers without hardware; cards for quotes, SMS when data fails.</td></tr>
+            <tr><td class="title">Channel</td><td>Photon (cloud iMessage numbers, Mini App cards)</td><td>Real iMessage numbers without hardware; cards for quotes.</td></tr>
             <tr><td class="title">Wallet</td><td>Base MCP <code>mcp.base.org</code> &#8594; user Base Account</td><td>User custody; <code>approvalUrl</code> flow keeps keys off the server.</td></tr>
             <tr><td class="title">Memory</td><td>Sibyl Fly Python sidecar (<code>cli init</code>, client SQLite+FTS5, mcp 8-tool contract)</td><td><span class="tier hot">HOT</span> pending quote &middot; <span class="tier warm">WARM</span> positions/basis &middot; <span class="tier cold">COLD</span> fills journal.</td></tr>
             <tr><td class="title">Money</td><td>Base MCP Aerodrome plugin (Sugar CLI prepare &#8594; <code>send_calls</code> execute · USDC legs)</td><td>One approval flow: route prepared on-venue, signed in user Base Account. Price comes from the venue quote itself.</td></tr>
@@ -416,7 +425,7 @@ pre.tree{font-family:inherit;font-size:12px;line-height:1.7;background:var(--pap
     </div>
   </section>
 
-  <footer>kiru/plan · mock phone number — nobody is on the other end (yet).</footer>
+  <footer>kiru/plan · mock phone number (nobody is on the other end yet).</footer>
 </main>
 
 <script>
@@ -464,7 +473,6 @@ pre.tree{font-family:inherit;font-size:12px;line-height:1.7;background:var(--pap
       ["You pay", "$50.00 USDC"],
       ["You get ~", "0.2741 NVDAc"],
       ["Network fee ~", "$0.04"],
-      ["Feed", "fresh · 12s old"]
     ];
     rows.forEach(function (r) {
       var div = document.createElement("div");
@@ -496,7 +504,7 @@ pre.tree{font-family:inherit;font-size:12px;line-height:1.7;background:var(--pap
     return sleep(600)
       .then(function () { msg("me", "you", "buy $50 of NVDAc"); return sleep(STEP); })
       .then(function () { t = showTyping(); return sleep(700); })
-      .then(function () { t.remove(); msg("bot", "kiru", "Live price for NVDAc — approve within 30 seconds:"); quoteCard(); return sleep(STEP); })
+      .then(function () { t.remove(); msg("bot", "kiru", "Live price for NVDAc (approve within 30 seconds):"); quoteCard(); return sleep(STEP); })
       .then(function () { msg("me", "you", "Approve"); return sleep(STEP); })
       .then(function () { t = showTyping(); return sleep(700); })
       .then(function () { t.remove(); msg("bot", "kiru", "Filled: 0.2741 NVDAc for $50.00 USDC. Held in your Base Account."); tapback(); return sleep(STEP); })
@@ -504,7 +512,7 @@ pre.tree{font-family:inherit;font-size:12px;line-height:1.7;background:var(--pap
       .then(function () { t = showTyping(); return sleep(700); })
       .then(function () {
         t.remove();
-        msg("bot", "kiru", "Your NVDAc basis: 0.2741 shares @ $182.40 avg — remembered by Sibyl (WARM entities/).");
+        msg("bot", "kiru", "Your NVDAc basis: 0.2741 shares @ $182.40 avg, remembered by Sibyl (WARM entities/).");
         status.textContent = "done · 6 messages";
         replay.hidden = false;
         replay.textContent = "replay";

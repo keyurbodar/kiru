@@ -1,0 +1,42 @@
+# Sibyl sidecar (recall and remember)
+
+SQLite backed FastAPI sidecar with exactly two routes: `POST /remember` and `POST /recall`.
+Keys are `(tenant_id, category, name)` and the body is stored as JSON text.
+See `contract.md` for the response shapes.
+
+## Run
+
+From the repo root:
+
+```sh
+/Library/Frameworks/Python.framework/Versions/3.13/bin/python3 -m pip install -r sibyl-sidecar/requirements.txt
+cd sibyl-sidecar
+/Library/Frameworks/Python.framework/Versions/3.13/bin/python3 -m uvicorn main:app --port 8000
+```
+
+The database file defaults to `sibyl-sidecar/memory.db` next to `main.py`.
+Set `SIDECAR_DB` to override it:
+
+```sh
+SIDECAR_DB=/tmp/sibyl-test.db /Library/Frameworks/Python.framework/Versions/3.13/bin/python3 -m uvicorn main:app --port 8000
+```
+
+## Roundtrip example
+
+Write a positions record, then read it back:
+
+```sh
+curl -s -X POST localhost:8000/remember -H 'Content-Type: application/json' -d \
+  '{"tenant_id": "+14158505302", "category": "positions", "name": "NVDAc", "body": {"shares": "0.2193", "avg_cost_usdc": "182.40"}}'
+# {"ok": true, "category": "positions", "name": "NVDAc"}
+
+curl -s -X POST localhost:8000/recall -H 'Content-Type: application/json' -d \
+  '{"tenant_id": "+14158505302", "category": "positions", "name": "NVDAc"}'
+# {"ok": true, "entity": {"tenant_id": "+14158505302", "category": "positions",
+#   "name": "NVDAc", "body": {"shares": "0.2193", "avg_cost_usdc": "182.40"},
+#   "updated_at": "2026-09-04T00:00:00.000Z"}}
+
+curl -s -X POST localhost:8000/recall -H 'Content-Type: application/json' -d \
+  '{"tenant_id": "+14158505302", "category": "positions", "name": "UNKNOWN"}'
+# {"ok": false, "code": "NOT_FOUND", "category": "positions", "name": "UNKNOWN"}
+```
