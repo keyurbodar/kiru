@@ -2,7 +2,8 @@ import { defineTool } from "eve/tools";
 import { always } from "eve/tools/approval";
 import { chainId, executeBuyInput, executeBuyOutput, type ExecuteBuyInput } from "../lib/contracts.js";
 import { clearInFlight, markInFlight, recordFill } from "../lib/orderMemory.js";
-import { buildSwapBody, fetchSwap } from "../lib/swap.js";
+import { USDC, usdcToBase } from "../lib/routingQuote.js";
+import { buildSwapBody, checkApproval, fetchSwap } from "../lib/swap.js";
 
 // Submit a staged NVDAc quote through the Uniswap routing API on Base 8453
 // and Base MCP send_calls, then poll get_request_status to confirmed.
@@ -242,6 +243,12 @@ export default defineTool({
       return out;
     }
 
+    const amountIn = typeof pending.payUsdc === "string" ? usdcToBase(pending.payUsdc) : null;
+    if (amountIn === null) {
+      const out = fail("NO_QUOTE");
+      yield out;
+      return out;
+    }
     const session: McpSession = { token, nextId: 1 };
     let approvalUrl: string;
     let requestId: string;
@@ -257,11 +264,19 @@ export default defineTool({
         },
       });
       await mcpPost(session, { jsonrpc: "2.0", method: "notifications/initialized" });
-      const sent = await callTool(session, "send_calls", {
-        chain: "base",
-        chainId,
-        calls: [{ to: swap.to, value: swap.value, data: swap.data }],
-      });
+      const wallets = resultFields(await callTool(session, "get_wallets", {}));
+      const wallet = strField(wallets, ["address", "walletAddress", "account"]) ?? process.env.BASE_ACCOUNT_ADDRESS ?? "";
+      if (wallet === "") throw new Error("no wallet address for check_approval");
+      const approval = await checkApproval(apiKey, { walletAddress: wallet, token: USDC, amount: amountIn.toString() });
+      if (approval !== null && approval.chainId !== chainId) throw new Error("approval on wrong chain");
+      const calls =
+        approval === null
+          ? [{ to: swap.to, value: swap.value, data: swap.data }]
+          : [
+              { to: approval.to, value: approval.value, data: approval.data },
+              { to: swap.to, value: swap.value, data: swap.data },
+            ];
+      const sent = await callTool(session, "send_calls", { chain: "base", calls });
       const fields = resultFields(sent);
       const url = strField(fields, ["approvalUrl"]);
       const rid = strField(fields, ["requestId"]);

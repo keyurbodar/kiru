@@ -15,7 +15,7 @@ export type QuoteResult =
   | ({ ok: true } & QuoteBuyOutput & { rawQuote: Record<string, unknown> })
   | { ok: false; reason: "NO_CONFIG" | "RPC_ERROR" | "NO_QUOTE" };
 
-function usdcToBase(s: string): bigint | null {
+export function usdcToBase(s: string): bigint | null {
   const m = /^(\d+)(?:\.(\d{1,6}))?$/.exec(s);
   if (!m) return null;
   const v = BigInt(m[1]) * 1_000_000n + BigInt((m[2] ?? "").padEnd(6, "0"));
