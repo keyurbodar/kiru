@@ -54,16 +54,17 @@ Rule: the issue brief is the task. Read it before touching code.
 - Secret lives in env (`PHOTON_PROJECT_ID`, project secret), shared out of
   band, never committed. `lines add` is Business-only; free tier provisions
   per-user shared numbers via `spectrum users add`, so don't touch lines.
-- Test path: Mac Messages (Apple ID email) gets full iMessage; Android gets
-  SMS/RCS fallback, plain texts only. Nothing answers until Eve is wired.
+- Test path: Mac Messages (Apple ID email) gets full iMessage. Nothing
+  answers until Eve is wired.
 
 ## Parallelism
 
-- Same-wave issues = run together, different files. Waves and labels live on the issues.
-- Same file needs two changes to one agent, one edit. Never two serial edits.
-- PR-000 (contracts) first: tool signatures + Sibyl HTTP shapes unblock both
-  lanes without meetings.
-- No spawn recursion: subagents don't spawn their own.
+- Always maximize parallel background agents and keep working yourself meanwhile.
+- Same file needs two changes: one agent, one edit.
+- Plan feat1 plus feat2 first, then implement both in one edit.
+- Contradicting output re-makes the plan: quality over shortcuts, goals may change.
+- Never wait idle for agents.
+- No spawn recursion: subagents do not spawn their own.
 
 ## Verification (behavior, not types)
 
@@ -71,7 +72,6 @@ Rule: the issue brief is the task. Read it before touching code.
   round-trips (remember to recall). No mocks of money paths.
 - Scope checks to the touched tool/route. Never repo-wide suites per change.
 - One venue rule: illiquid pair returns "no quote", never a guessed price.
-- First live fill is $5 on mainnet, watched start to finish.
 
 ## PR discipline
 
@@ -84,11 +84,33 @@ Rule: the issue brief is the task. Read it before touching code.
 ## References (read these, not the world)
 
 - Issues list (queue; briefs live in the issue bodies): `https://github.com/keyurbodar/kiru/issues`, `plan.html` sections 08 and 09 (stack + tree).
+- Photon CLI: `photon --help`, projects/lines/users for numbers and provisioning.
+- Alchemy CLI: `alchemy --help`, agent-prompt, `--json --no-interactive` for scripted calls.
+- Eve docs channels/photon: `https://eve.dev/docs/channels/photon`
+- Eve docs deployment/vercel: `https://eve.dev/docs/deployment/vercel`
 - Base MCP skill: `https://github.com/base/skills/blob/master/skills/base-mcp/SKILL.md`
 - Aerodrome plugin: `https://docs.base.org/agents/skills/plugins/aerodrome.md`
-- B20/tokenized stocks: `https://docs.base.org/base-chain/asset-issuance/tokenized-stocks-on-base`
-- Eve Photon channel: `https://eve.dev/docs/channels/photon`
+- B20 tokenized stocks guide: `https://docs.base.org/base-chain/asset-issuance/tokenized-stocks-on-base`
 - Photon Vercel Eve iMessage example: `https://github.com/photon-hq/vercel-eve-imessage-example.git`
+- Sibyl memory docs (recall/remember/search/record, HOT/WARM/COLD tiers).
+- Feature map `skills/verify-kiru/references/features/` (read before building user-facing flows).
+
+## Coding style
+
+- Names are meaningful, short, and human: no AI-looking prefixes or suffixes.
+- No redundant temporaries: compose calls (`c = g(f(a))`).
+- Under 20 lines used once: inline. Over 20 lines: refactor on need. Under 20 reused: function.
+- Order: imports, enums, structs, logic.
+- No em dashes in code or prose.
+- No unused vars or files: remove before bloat.
+- Max 1000 lines per file: directory trees over crowded dirs.
+- Stuck in a loop: reassess instead of retrying blind.
+
+## PR Creator
+
+- Re-read your own diff end to end as a zero-knowledge intern: intent match, tests constrain not mirror, flag review items.
+- No claude, ai, or self references anywhere, including co-author lines.
+- PR bodies are very detailed for senior plus security review: implementation, files, test outputs, todos, context.
 
 ## Taste
 
