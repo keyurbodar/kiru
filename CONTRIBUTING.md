@@ -1,11 +1,11 @@
 # Contributing to Kiru
 
-Spec source: `docs/PRs/PR-XXX.md` + `pr.tsv`. The brief is the task; this file is the workflow.
+Spec source: the issue brief. The brief is the task; this file is the workflow.
 
 ## Branches
 
 - `main` is always shippable. Never push to it directly.
-- One branch per PR, named exactly as in `pr.tsv` (`pr-008-aerodrome-quote`).
+- One branch per issue, named `pr-XXX-slug` (`pr-008-aerodrome-quote`).
   Branch from current `main`, one PR's scope only.
 
 ## Commits
@@ -15,10 +15,10 @@ Spec source: `docs/PRs/PR-XXX.md` + `pr.tsv`. The brief is the task; this file i
 
 ## Pull requests
 
-- Title: `[PR-008] Aerodrome quote via Sugar CLI`. Body: link the brief, list acceptance criteria with checkmarks.
-- Keep it under ~20 minutes of review time. Tests ride inside the PR (see brief Steps) — no test-only PRs.
-- Merge in wave order; respect `depends_on` in `pr.tsv`. Same `parallel_group` letters run concurrently.
-- Update the row on merge: `completion_pct` → `100`, `notes` → merge date + commit.
+- Title: `[PR-008] Aerodrome quote via Sugar CLI`. Body: link the issue, list acceptance criteria with checkmarks.
+- Keep it under ~20 minutes of review time. Tests ride inside the PR (see the issue Steps), no test-only PRs.
+- Merge in wave order; respect Depends on the issue. Same-wave issues run concurrently.
+- On merge: close the issue.
 
 ## Reviews
 
@@ -33,5 +33,5 @@ Spec source: `docs/PRs/PR-XXX.md` + `pr.tsv`. The brief is the task; this file i
 
 ## Tracking
 
-- `pr.tsv` is the single tracker. The plan page (`plan.html`) renders it live.
-- After merge: `cp plan.html pr.tsv → dist-plan/` and republish (`surge ./dist-plan https://kiru-plan.surge.sh`) so the site stays current.
+- Issues own the queue: work from the issue, close it on merge.
+- Republish the plan page only when `plan.html` changes: `cp plan.html → dist-plan/` and republish (`surge ./dist-plan https://kiru-plan.surge.sh`) so the site stays current.

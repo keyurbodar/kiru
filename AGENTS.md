@@ -25,7 +25,7 @@ confirmation.
 
 ## Glossary
 
-- **you** = the agent reading this. **plan** = `plan.html` + `pr.tsv`.
+- **you** = the agent reading this. **plan** = `plan.html`.
 - **lane** = your half: keyur = money+memory, shreyash = surface. Review the
   other lane's PRs.
 - **quote** = unsigned Aerodrome calldata, shown in chat, dies in 30s.
@@ -41,15 +41,14 @@ eve/agent/       channels/photon.ts  # iMessage (PR-002)
                  instructions.md skills/stocks.md  # B20 plugin (PR-009)
 miniapp/         stocks/card/        # approve to Filled flip (PR-014)
 sibyl-sidecar/   main.py + memory.db # recall/remember/search/record
-docs/PRs/        PR-000.md …         # one brief per PR, the task spec
-plan.html pr.tsv CONTRIBUTING.md     # vision, queue, workflow
+plan.html CONTRIBUTING.md          # vision, workflow; issues #1-19 are the queue
 ```
 
-Rule: `docs/PRs/PR-XXX.md` is the task. Read it before touching code.
+Rule: the issue brief is the task. Read it before touching code.
 
 ## Parallelism
 
-- Same `parallel_group` letter in `pr.tsv` = run together, different files.
+- Same-wave issues = run together, different files. Waves and labels live on the issues.
 - Same file needs two changes to one agent, one edit. Never two serial edits.
 - PR-000 (contracts) first: tool signatures + Sibyl HTTP shapes unblock both
   lanes without meetings.
@@ -65,15 +64,15 @@ Rule: `docs/PRs/PR-XXX.md` is the task. Read it before touching code.
 
 ## PR discipline
 
-- `pr.tsv` is the queue: 19 PRs, est 20 min or less, tests ride inside each PR.
-- Branch per PR id (`pr-008-aerodrome-quote`), conventional commits,
-  squash-merge in wave order honoring `depends_on`.
-- On merge: `completion_pct` to 100 + note, republish plan page.
+- Issues #1-19 are the queue: 19 PRs, est 20 min or less, tests ride inside each PR.
+- Work from the issue. Branch per issue id (`pr-008-aerodrome-quote`),
+  conventional commits, squash-merge in wave order honoring Depends.
+- On merge: close the issue.
 - Never make a GitHub PR unless Keyur asks. Never push to `main` directly.
 
 ## References (read these, not the world)
 
-- `docs/PRs/` briefs, `plan.html` sections 08 and 09 (stack + tree), `pr.tsv` (queue).
+- Issues list (queue; briefs live in the issue bodies): `https://github.com/keyurbodar/kiru/issues`, `plan.html` sections 08 and 09 (stack + tree).
 - Base MCP skill: `https://github.com/base/skills/blob/master/skills/base-mcp/SKILL.md`
 - Aerodrome plugin: `https://docs.base.org/agents/skills/plugins/aerodrome.md`
 - B20/tokenized stocks: `https://docs.base.org/base-chain/asset-issuance/tokenized-stocks-on-base`

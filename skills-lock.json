@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "skills": {
+    "imessage": {
+      "source": "photon-hq/skills",
+      "sourceType": "github",
+      "skillPath": "skills/imessage/SKILL.md",
+      "computedHash": "14504b1077b1ab380036520c6cbb0f9eaf32582ca603763fbf346a4391acb9a1"
+    },
+    "photon-cli": {
+      "source": "photon-hq/skills",
+      "sourceType": "github",
+      "skillPath": "skills/photon-cli/SKILL.md",
+      "computedHash": "cd3aa827890a716bec483664c24bb6af733be88f860edd395ac453c1e1802182"
+    },
+    "spectrum": {
+      "source": "photon-hq/skills",
+      "sourceType": "github",
+      "skillPath": "skills/spectrum/SKILL.md",
+      "computedHash": "8793eb5e52a863f66ed0b7f271dbc1084263e265af65972d51d0acaa44142caa"
+    }
+  }
+}
