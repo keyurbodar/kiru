@@ -4,7 +4,7 @@
   "buildCommand": "npm --prefix eve run build",
   "functions": {
     "eve/api/health.ts": {
-      "runtime": "nodejs24.x"
+      "runtime": "nodejs22.x"
     }
   }
 }
