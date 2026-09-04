@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kiru — text to own stocks</title>
+<style>
+::root{
+  --paper:#242424;
+  --ink:#FAFAFA;
+  --mut:#B5B5B5;
+  --card:#2E2E2E;
+  --line:#484848;
+  --sage:#6C8F6B;
+  --accent:#3F5B45;
+  --red:#C64534;
+}
+::selection{background:#6C8F6B;color:#000;}
+*{box-sizing:border-box;border-radius:0;}
+html{margin:0;padding:0;}
+body{
+  margin:0;
+  background:var(--paper, #242424);
+  color:var(--ink, #FAFAFA);
+  font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Courier New,monospace;
+  font-size:14px;
+  line-height:1.65;
+}
+nav{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:var(--paper, #242424);
+  border-bottom:1px solid var(--line, #484848);
+}
+nav .row{
+  max-width:760px;
+  margin:0 auto;
+  padding:10px 20px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px 14px;
+  align-items:baseline;
+}
+nav .brand{font-weight:700;margin-right:8px;}
+nav a{color:var(--ink, #FAFAFA);text-decoration:none;font-size:13px;}
+nav a:hover{text-decoration:underline;}
+main{
+  max-width:760px;
+  margin:0 auto;
+  padding:32px 20px 64px;
+}
+section{margin:0 0 56px;}
+.card{
+  background:var(--card, #2E2E2E);
+  border:1px solid var(--line, #484848);
+  padding:28px;
+}
+.secno{
+  display:block;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--sage, #6C8F6B);
+  margin-bottom:10px;
+}
+h1{font-size:28px;line-height:1.25;margin:0 0 8px;font-weight:700;}
+h2{font-size:20px;line-height:1.35;margin:0 0 8px;font-weight:700;}
+h3{font-size:14px;margin:0 0 8px;font-weight:700;}
+p{margin:0 0 12px;}
+.sub{font-size:15px;color:var(--mut, #B5B5B5);margin:0 0 16px;}
+.lead{color:var(--mut, #B5B5B5);font-size:13px;margin:0 0 16px;}
+.kicker{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 20px;}
+.kicker span{
+  border:1px solid var(--line, #484848);
+  padding:3px 10px;
+  font-size:12px;
+}
+.kicker span.sage{border-color:#3F5B45;background:#3F5B45;color:#FAFAFA;}
+.startbox{
+  border:1px solid var(--line, #484848);
+  padding:14px 16px;
+  max-width:420px;
+}
+.startbox .lbl{font-size:12px;color:var(--mut, #B5B5B5);}
+.startbox .num{font-size:18px;font-weight:700;margin:2px 0;}
+.startbox .hint{font-size:13px;color:var(--mut, #B5B5B5);margin:0;}
+.gate{color:var(--red, #C64534);}
+ul.feats{list-style:none;margin:16px 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:0;}
+ul.feats li{border-top:1px solid var(--line, #484848);padding:10px 12px 10px 0;font-size:13px;}
+ul.feats li:nth-child(odd){padding-right:16px;}
+ul.feats b{display:block;font-size:13px;}
+@media (max-width:600px){ul.feats{grid-template-columns:1fr;}}
+svg.diagram{width:100%;height:auto;display:block;margin-top:16px;}
+svg.diagram text{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Courier New,monospace;}
+svg.diagram .t{font-size:13px;font-weight:700;fill:#FAFAFA;}
+svg.diagram .m{font-size:10px;fill:#B5B5B5;}
+.chat{display:flex;flex-direction:column;gap:10px;min-height:330px;}
+.msg{max-width:88%;}
+.msg .who{display:block;font-size:11px;color:var(--mut, #B5B5B5);margin-bottom:3px;}
+.bubble{
+  border:1px solid var(--line, #484848);
+  background:var(--card, #2E2E2E);
+  padding:8px 12px;
+  font-size:13px;
+}
+.msg.me{align-self:flex-end;}
+.msg.me .bubble{background:#3F5B45;border-color:#3F5B45;color:#FAFAFA;}
+.msg.me .who{text-align:right;}
+.quote{
+  border:1px solid var(--sage, #6C8F6B);
+  padding:8px 12px;
+  font-size:13px;
+  align-self:flex-start;
+  max-width:88%;
+}
+.quote b{display:block;font-size:13px;margin-bottom:4px;}
+.quote .row{display:flex;justify-content:space-between;gap:16px;}
+.quote .row span:first-child{color:var(--mut, #B5B5B5);}
+.tapback{align-self:flex-end;font-size:12px;color:var(--mut, #B5B5B5);}
+.typing{align-self:flex-start;font-size:13px;color:var(--mut, #B5B5B5);}
+.typing i{display:inline-block;width:5px;height:5px;background:var(--mut, #B5B5B5);margin-left:3px;animation:bl 1s infinite;}
+.typing i:nth-child(2){animation-delay:.15s;}
+.typing i:nth-child(3){animation-delay:.3s;}
+@keyframes bl{0%,100%{opacity:.25;}50%{opacity:1;}}
+.simctl{margin-top:14px;font-size:13px;color:var(--mut, #B5B5B5);}
+button{
+  font-family:inherit;
+  background:var(--card, #2E2E2E);
+  border:1px solid var(--ink, #FAFAFA);
+  color:var(--ink, #FAFAFA);
+  font-size:13px;
+  padding:4px 14px;
+  cursor:pointer;
+}
+button:hover{background:var(--ink, #FAFAFA);color:var(--card, #2E2E2E);}
+.textbtn{background:none;border:none;border-bottom:1px solid var(--ink, #FAFAFA);padding:0 1px;cursor:pointer;color:var(--ink, #FAFAFA);}
+.textbtn:hover{background:none;color:var(--sage, #6C8F6B);border-bottom-color:var(--sage, #6C8F6B);}
+table{border-collapse:collapse;width:100%;font-size:13px;}
+th,td{border:1px solid var(--line, #484848);padding:7px 10px;text-align:left;vertical-align:top;}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;background:#2E2E2E;}
+td.title{color:var(--ink, #FAFAFA);}
+td.dep,td.branch{font-size:12px;}
+.map{margin-top:14px;}
+.tier{display:inline-block;border:1px solid var(--ink, #FAFAFA);padding:0 8px;font-size:12px;font-weight:700;margin-right:6px;}
+.tier.hot{border-color:var(--red, #C64534);color:var(--red, #C64534);}
+.tier.warm{border-color:var(--sage, #6C8F6B);color:var(--sage, #6C8F6B);}
+.tier.cold{border-color:var(--ink, #FAFAFA);}
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 10px;font-size:13px;}
+.filters label{display:flex;align-items:center;gap:8px;}
+.filters select{
+  font-family:inherit;
+  font-size:13px;
+  background:var(--card, #2E2E2E);
+  border:1px solid var(--ink, #FAFAFA);
+  color:var(--ink, #FAFAFA);
+  padding:3px 8px;
+}
+#prcount{font-size:13px;color:var(--mut, #B5B5B5);margin:0 0 10px;}
+#prcount b{color:var(--ink, #FAFAFA);}
+.tblwrap{overflow-x:auto;}
+.wv,.lb{display:inline-block;min-width:26px;text-align:center;border:1px solid var(--line, #484848);padding:0 6px;font-size:12px;}
+.w1,.w2,.w3,.w4{border-color:var(--sage, #6C8F6B);color:var(--sage, #6C8F6B);}
+.lb-core{border-color:var(--ink, #FAFAFA);}
+.lb-feature{border-color:var(--sage, #6C8F6B);color:var(--sage, #6C8F6B);}
+.lb-harden{border-color:var(--red, #C64534);color:var(--red, #C64534);}
+.own{display:inline-block;min-width:26px;text-align:center;border:1px solid var(--line, #484848);padding:0 6px;font-size:12px;}
+.own-keyur{border-color:var(--accent, #3F5B45);background:var(--accent, #3F5B45);color:var(--ink, #FAFAFA);}
+.own-shreyash{border-color:var(--ink, #FAFAFA);}
+.refgrid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:14px;}
+.refcat{border-top:1px solid var(--line, #484848);padding:12px 16px 12px 0;}
+.refcat a{display:block;color:var(--sage, #6C8F6B);font-size:13px;padding:3px 0;text-decoration:none;}
+.refcat a:hover{text-decoration:underline;}
+.refcat.wide{grid-column:1/-1;}
+@media (max-width:600px){.refgrid{grid-template-columns:1fr;}}
+footer{text-align:center;color:var(--mut, #B5B5B5);font-size:12px;padding-top:8px;}
+code{font-family:inherit;font-size:12px;background:var(--paper, #242424);border:1px solid var(--line, #484848);padding:0 5px;}
+pre.tree{font-family:inherit;font-size:12px;line-height:1.7;background:var(--paper, #242424);border:1px solid var(--line, #484848);padding:14px 16px;overflow-x:auto;margin:14px 0 0;white-space:pre;}
+[hidden]{display:none !important;}
+</style>
+</head>
+<body>
+<nav><div class="row"><span class="brand">kiru</span><a href="#overview">01 overview</a><a href="#features">02 features</a><a href="#arch">03 arch</a><a href="#sim">04 sim</a><a href="#sibyl">05 sibyl</a><a href="#prs">06 prs</a><a href="#refs">07 refs</a><a href="#stack">08 stack</a><a href="#tree">09 tree</a></div></nav>
+<main>
+
+  <section id="overview">
+    <div class="card">
+      <span class="secno">01 · Overview</span>
+      <h1>Kiru.</h1>
+      <p class="sub">Buy real tokenized stocks by text message — as easy as texting a friend.</p>
+      <div class="kicker">
+        <span>Real money</span>
+        <span>Live price cards</span>
+        <span class="sage">You keep custody</span>
+        <span class="gate">Outside the US</span>
+      </div>
+      <div class="startbox">
+        <div class="lbl">text to start (mock)</div>
+        <div class="num">+1 (555) 013-4472</div>
+        <p class="hint">Send “buy $50 of NVDAc” — that’s the whole onboarding.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="card">
+      <span class="secno">02 · Features</span>
+      <h2>No apps. No charts. Just iMessage.</h2>
+      <p class="lead">No apps to install, no charts to learn, no jargon.</p>
+      <ul class="feats">
+        <li><b>Text to trade</b>Text a number to buy and sell tokenized stocks with real money.</li>
+        <li><b>Live price cards</b>A live price card right in the chat before you commit to anything.</li>
+        <li><b>You approve everything</b>Every order needs your yes — nothing ever moves without it.</li>
+        <li><b>Memory for money</b>Ask “what’s my average cost?” anytime — Kiru remembers your holdings.</li>
+        <li><b>Cash out anytime</b>Cash out to dollars (USDC) whenever you want.</li>
+        <li><b>Rich mini-cards</b>Portfolio mini-cards, live in the conversation.</li>
+        <li><b>Right region, right start</b><span class="gate">Outside the US only — eligibility is checked up front.</span></li>
+        <li><b>Self-custody</b>Your assets live in your own account, not ours.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="arch">
+    <div class="card">
+      <span class="secno">03 · Architecture</span>
+      <h2>One text, whole loop.</h2>
+      <p class="lead">One text travels the whole loop — and your memory travels with it.</p>
+      <svg class="diagram" viewBox="0 0 720 470" role="img" aria-label="Kiru architecture diagram">
+        <defs>
+          <marker id="ab" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8" fill="none" stroke="#B5B5B5" stroke-width="1.5"/>
+          </marker>
+          <marker id="ag" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8" fill="none" stroke="#6C8F6B" stroke-width="1.5"/>
+          </marker>
+        </defs>
+        <!-- top row: main flow -->
+        <rect x="8" y="16" width="112" height="56" fill="#2E2E2E" stroke="#B5B5B5" stroke-width="1"/>
+        <text class="t" x="64" y="40" text-anchor="middle">iMessage</text>
+        <text class="m" x="64" y="58" text-anchor="middle">you text</text>
+
+        <rect x="152" y="16" width="112" height="56" fill="#2E2E2E" stroke="#B5B5B5" stroke-width="1"/>
+        <text class="t" x="208" y="40" text-anchor="middle">Photon</text>
+        <text class="m" x="208" y="58" text-anchor="middle">transport</text>
+
+        <rect x="296" y="16" width="104" height="56" fill="#2E2E2E" stroke="#B5B5B5" stroke-width="1"/>
+        <text class="t" x="348" y="40" text-anchor="middle">Eve</text>
+        <text class="m" x="348" y="58" text-anchor="middle">agent · Vercel</text>
+
+        <rect x="432" y="16" width="128" height="56" fill="#2E2E2E" stroke="#B5B5B5" stroke-width="1"/>
+        <text class="t" x="496" y="40" text-anchor="middle">Base MCP</text>
+        <text class="m" x="496" y="58" text-anchor="middle">mcp.base.org</text>
+
+        <rect x="592" y="16" width="120" height="56" fill="#2E2E2E" stroke="#B5B5B5" stroke-width="1"/>
+        <text class="t" x="652" y="40" text-anchor="middle">Base Acct</text>
+        <text class="m" x="652" y="58" text-anchor="middle">custody · USDC</text>
+
+        <line x1="120" y1="44" x2="148" y2="44" stroke="#B5B5B5" stroke-width="1" marker-end="url(#ab)"/>
+        <line x1="264" y1="44" x2="292" y2="44" stroke="#B5B5B5" stroke-width="1" marker-end="url(#ab)"/>
+        <line x1="400" y1="44" x2="428" y2="44" stroke="#B5B5B5" stroke-width="1" marker-end="url(#ab)"/>
+        <line x1="560" y1="44" x2="588" y2="44" stroke="#B5B5B5" stroke-width="1" marker-end="url(#ab)"/>
+
+        <!-- second row: quotes + feeds -->
+        <rect x="296" y="140" width="140" height="56" fill="#2E2E2E" stroke="#B5B5B5" stroke-width="1"/>
+        <text class="t" x="366" y="164" text-anchor="middle">1inch</text>
+        <text class="m" x="366" y="182" text-anchor="middle">quotes · Base 8453</text>
+
+        <rect x="464" y="140" width="176" height="56" fill="#2E2E2E" stroke="#B5B5B5" stroke-width="1"/>
+        <text class="t" x="552" y="164" text-anchor="middle">Chainlink feeds</text>
+        <text class="m" x="552" y="182" text-anchor="middle">total-return · staleness-gated</text>
+
+        <line x1="348" y1="72" x2="348" y2="140" stroke="#B5B5B5" stroke-width="1" marker-end="url(#ab)"/>
+        <path d="M 392 100 H 464 V 140" fill="none" stroke="#B5B5B5" stroke-width="1" marker-end="url(#ab)"/>
+
+        <!-- sibyl sidecar -->
+        <rect x="8" y="280" width="392" height="150" fill="#2E2E2E" stroke="#6C8F6B" stroke-width="1"/>
+        <text class="t" x="24" y="306">Sibyl sidecar · Fly · Python</text>
+        <text class="m" x="24" y="326">cli + client + mcp — Eve reads/writes memory here</text>
+        <text class="m" x="24" y="348">HOT state/ -&gt; pending quote + in-progress order</text>
+        <text class="m" x="24" y="370">WARM entities/ -&gt; positions + per-token basis</text>
+        <text class="m" x="24" y="392">COLD journal/ -&gt; fills history + audit trail</text>
+
+        <path d="M 348 140 V 240 H 200 V 276" fill="none" stroke="#6C8F6B" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#ag)"/>
+        <text class="m" x="206" y="252">memory side-path</text>
+
+        <!-- mini app -->
+        <rect x="432" y="280" width="280" height="150" fill="#2E2E2E" stroke="#B5B5B5" stroke-width="1"/>
+        <text class="t" x="448" y="306">Mini App card</text>
+        <text class="m" x="448" y="326">live quote / fill / portfolio card,</text>
+        <text class="m" x="448" y="346">rendered back through Photon</text>
+        <text class="m" x="448" y="366">into the same iMessage thread</text>
+
+        <path d="M 560 196 V 240 H 640 V 276" fill="none" stroke="#B5B5B5" stroke-width="1" marker-end="url(#ab)"/>
+        <path d="M 432 330 H 300 V 100 H 264" fill="none" stroke="#B5B5B5" stroke-width="1" marker-end="url(#ab)"/>
+        <text class="m" x="306" y="240">card round-trip</text>
+      </svg>
+    </div>
+  </section>
+
+  <section id="sim">
+    <div class="card">
+      <span class="secno">04 · Simulation</span>
+      <h2>Watch a trade happen.</h2>
+      <p class="lead">Auto-playing mock of the real thread. No backend — it runs on load.</p>
+      <div class="chat" id="chat" aria-live="polite"></div>
+      <div class="simctl"><span id="simstatus">running...</span> <button id="replay" class="textbtn" type="button" hidden>replay</button></div>
+    </div>
+  </section>
+
+  <section id="sibyl">
+    <div class="card">
+      <span class="secno">05 · Sibyl</span>
+      <h2>Memory with three temperatures.</h2>
+      <p class="lead">Kiru’s memory is a Sibyl sidecar: three Python packages, one contract, three tiers that matter.</p>
+      <table class="map">
+        <tr><th>Package</th><th>Job in Kiru</th></tr>
+        <tr><td><code>sibyl-memory-cli</code></td><td>Activates the sidecar and manages tiers (<code>init</code>, <code>status</code>, upgrades).</td></tr>
+        <tr><td><code>sibyl-memory-client</code></td><td>The engine itself — local SQLite + full-text search, five-tier schema, no embeddings.</td></tr>
+        <tr><td><code>sibyl-memory-mcp</code></td><td>The contract Eve speaks — every memory read/write goes through this MCP server.</td></tr>
+      </table>
+      <table class="map">
+        <tr><th>Tier</th><th>What Kiru keeps there</th></tr>
+        <tr><td><span class="tier hot">HOT</span><code>state/</code></td><td>The live quote you haven’t approved yet, and the order in flight.</td></tr>
+        <tr><td><span class="tier warm">WARM</span><code>entities/</code></td><td>One record per token: shares held and average cost — your basis.</td></tr>
+        <tr><td><span class="tier cold">COLD</span><code>journal/</code></td><td>Every fill, append-only — the audit trail behind “what did I buy?”</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section id="prs">
+    <div class="card">
+      <span class="secno">06 · Build plan</span>
+      <h2>19 PRs to launch.</h2>
+      <p class="lead">Parsed live from pr.tsv at runtime (embedded fallback keeps file:// working).</p>
+      <div class="kicker"><span class="sage">keyur = money+memory (Base MCP, Aerodrome, Sibyl, alerts)</span><span>shreyash = surface (Eve, Photon, cards, Mini App, polish)</span></div>
+      <div class="filters">
+        <label>wave: <select id="fwave"><option value="">all</option><option>1</option><option>2</option><option>3</option><option>4</option></select></label>
+        <label>label: <select id="flabel"><option value="">all</option><option>CORE</option><option>FEATURE</option><option>HARDEN</option></select></label>
+        <label>lane: <select id="fowner"><option value="">all</option><option>keyur</option><option>shreyash</option></select></label>
+        <button id="clearf" type="button">clear</button>
+      </div>
+      <p id="prcount">loading...</p>
+      <div class="tblwrap">
+        <table id="prtable">
+          <thead><tr>
+            <th>pr_id</th><th>wave</th><th>label</th><th>title</th><th>cplx</th><th>est</th><th>dep</th><th>par</th><th>branch</th><th>done</th><th>owner</th>
+          </tr></thead>
+          <tbody id="prbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="refs">
+    <div class="card">
+      <span class="secno">07 · References</span>
+      <h2>Source material.</h2>
+      <p class="lead">Source material — link list.</p>
+      <div class="refgrid">
+        <div class="refcat"><h3>Photon</h3>
+          <a href="https://photon.codes/">Photon — bring your agents to iMessage &amp; beyond</a>
+          <a href="https://photon.codes/docs/spectrum-ts/providers/imessage">Photon docs — iMessage provider</a>
+          <a href="https://photon.codes/platform/imessage">Photon platform — iMessage API &amp; mini apps</a>
+        </div>
+        <div class="refcat"><h3>Eve</h3>
+          <a href="https://vercel.com/changelog/imessage-support-for-eve-agents">Eve changelog — iMessage support via the Photon channel</a>
+          <a href="https://vercel.com/docs/connect/frameworks/eve">Eve docs — deploying Eve agents (Vercel)</a>
+          <a href="https://eve.dev/">Eve — the agent framework</a>
+        </div>
+        <div class="refcat"><h3>Base · tokenized stocks · Chainlink · 1inch</h3>
+          <a href="https://docs.base.org/base-chain/asset-issuance/tokenized-stocks-on-base">Base docs — tokenized stocks guide</a>
+          <a href="https://blog.base.org/tokenized-stocks">Base blog — tokenized stocks are live on Base</a>
+          <a href="https://docs.chain.link/data-feeds/tokenized-equity-feeds/coinbase">Chainlink docs — tokenized equity feeds</a>
+          <a href="https://blog.1inch.com/the-1inch-network-expands-to-base/">1inch blog — expanding to Base</a>
+          <a href="https://1inch.com/blog/post/1inchs-swap-api-now-facilitates-rwas">1inch blog — Swap API for RWAs</a>
+        </div>
+        <div class="refcat"><h3>Base MCP</h3>
+          <a href="https://docs.base.org/ai-agents/quickstart">Base docs — Base MCP quickstart</a>
+          <a href="https://blog.base.org/base-mcp">Base blog — introducing Base MCP</a>
+          <a href="https://github.com/base/skills/blob/master/skills/base-mcp/SKILL.md">base/skills — base-mcp skill</a>
+        </div>
+        <div class="refcat wide"><h3>Sibyl</h3>
+          <a href="https://docs.sibyllabs.org/memory/">Sibyl Memory — docs</a>
+          <a href="https://pypi.org/project/sibyl-memory-client/">PyPI — sibyl-memory-client</a>
+          <a href="https://pypi.org/project/sibyl-memory-cli/">PyPI — sibyl-memory-cli</a>
+          <a href="https://pypi.org/project/sibyl-memory-mcp/">PyPI — sibyl-memory-mcp</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="stack">
+    <div class="card">
+      <span class="secno">08 · Tech stack</span>
+      <h2>Least custom code wins.</h2>
+      <p class="lead">Each layer picks the managed option; custom code lives only in Eve tools.</p>
+      <div class="tblwrap">
+        <table>
+          <thead><tr><th>Layer</th><th>Choice</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td class="title">Runtime</td><td>Eve (TS, Vercel, Photon channel, schedules)</td><td>Least custom code: agent, channel, and cron ship together.</td></tr>
+            <tr><td class="title">Channel</td><td>Photon (cloud iMessage numbers, Mini App cards, SMS fallback)</td><td>Real iMessage numbers without hardware; cards for quotes, SMS when data fails.</td></tr>
+            <tr><td class="title">Wallet</td><td>Base MCP <code>mcp.base.org</code> &#8594; user Base Account</td><td>User custody; <code>approvalUrl</code> flow keeps keys off the server.</td></tr>
+            <tr><td class="title">Memory</td><td>Sibyl Fly Python sidecar (<code>cli init</code>, client SQLite+FTS5, mcp 8-tool contract)</td><td><span class="tier hot">HOT</span> pending quote &middot; <span class="tier warm">WARM</span> positions/basis &middot; <span class="tier cold">COLD</span> fills journal.</td></tr>
+            <tr><td class="title">Money</td><td>Base MCP Aerodrome plugin (Sugar CLI prepare &#8594; <code>send_calls</code> execute · USDC legs)</td><td>One approval flow: route prepared on-venue, signed in user Base Account. Price comes from the venue quote itself.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="tree">
+    <div class="card">
+      <span class="secno">09 · File tree</span>
+      <h2>Where each PR lands.</h2>
+      <p class="lead">Leaf annotations map to PR ids where known.</p>
+      <pre class="tree">kiru/
+  plan.html
+  pr.tsv
+  dist-plan/
+  eve/
+    agent/
+      channels/photon.ts            # PR-002
+      tools/getPrice.ts             # PR-008
+      tools/getPosition.ts          # PR-007
+      tools/quoteBuy.ts             # PR-008
+      tools/executeBuy.ts           # PR-011, PR-012
+      schedules/alerts.ts           # PR-018
+      schedules/recap.ts            # PR-019
+    instructions.md                 # PR-001
+    skills/stocks.md                # PR-009
+  miniapp/
+    stocks/card/page.tsx            # PR-014
+  sibyl-sidecar/
+    main.py                         # PR-004, PR-010
+    memory.db (volume)              # PR-017
+    README</pre>
+    </div>
+  </section>
+
+  <footer>kiru/plan · mock phone number — nobody is on the other end (yet).</footer>
+</main>
+
+<script>
+(function () {
+  "use strict";
+  var STEP = 900;
+  function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+  var chat = document.getElementById("chat");
+  var status = document.getElementById("simstatus");
+  var replay = document.getElementById("replay");
+
+  function msg(who, label, text) {
+    var wrap = document.createElement("div");
+    wrap.className = "msg " + who;
+    var w = document.createElement("span");
+    w.className = "who";
+    w.textContent = label;
+    var b = document.createElement("div");
+    b.className = "bubble";
+    b.textContent = text;
+    wrap.appendChild(w);
+    wrap.appendChild(b);
+    chat.appendChild(wrap);
+    return wrap;
+  }
+  function showTyping() {
+    var t = document.createElement("div");
+    t.className = "typing";
+    t.textContent = "kiru is typing";
+    var dots = document.createElement("span");
+    dots.innerHTML = "<i></i><i></i><i></i>";
+    t.appendChild(dots);
+    chat.appendChild(t);
+    return t;
+  }
+  function quoteCard() {
+    var q = document.createElement("div");
+    q.className = "quote";
+    var b = document.createElement("b");
+    b.textContent = "NVDAc · quote (30s)";
+    q.appendChild(b);
+    var rows = [
+      ["Price", "$182.40"],
+      ["You pay", "$50.00 USDC"],
+      ["You get ~", "0.2741 NVDAc"],
+      ["Network fee ~", "$0.04"],
+      ["Feed", "fresh · 12s old"]
+    ];
+    rows.forEach(function (r) {
+      var div = document.createElement("div");
+      div.className = "row";
+      var a = document.createElement("span");
+      a.textContent = r[0];
+      var c = document.createElement("span");
+      c.textContent = r[1];
+      div.appendChild(a);
+      div.appendChild(c);
+      q.appendChild(div);
+    });
+    chat.appendChild(q);
+  }
+  function tapback() {
+    var tb = document.createElement("div");
+    tb.className = "tapback";
+    tb.textContent = "you liked the fill receipt";
+    chat.appendChild(tb);
+  }
+  var running = false;
+  function run() {
+    if (running) return;
+    running = true;
+    chat.innerHTML = "";
+    replay.hidden = true;
+    status.textContent = "running...";
+    var t;
+    return sleep(600)
+      .then(function () { msg("me", "you", "buy $50 of NVDAc"); return sleep(STEP); })
+      .then(function () { t = showTyping(); return sleep(700); })
+      .then(function () { t.remove(); msg("bot", "kiru", "Live price for NVDAc — approve within 30 seconds:"); quoteCard(); return sleep(STEP); })
+      .then(function () { msg("me", "you", "Approve"); return sleep(STEP); })
+      .then(function () { t = showTyping(); return sleep(700); })
+      .then(function () { t.remove(); msg("bot", "kiru", "Filled: 0.2741 NVDAc for $50.00 USDC. Held in your Base Account."); tapback(); return sleep(STEP); })
+      .then(function () { msg("me", "you", "what's my NVDAc basis?"); return sleep(STEP); })
+      .then(function () { t = showTyping(); return sleep(700); })
+      .then(function () {
+        t.remove();
+        msg("bot", "kiru", "Your NVDAc basis: 0.2741 shares @ $182.40 avg — remembered by Sibyl (WARM entities/).");
+        status.textContent = "done · 6 messages";
+        replay.hidden = false;
+        replay.textContent = "replay";
+        running = false;
+      });
+  }
+  replay.addEventListener("click", run);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", run);
+  } else { run(); }
+
+  /* ---- PR table: fetch pr.tsv over http, embedded fallback on file:// ---- */
+  var FALLBACK = [
+["PR-000","1","CORE","Eve tool + Sibyl HTTP contracts","1","15","none","A","pr-000-contracts","0","tbd","tbd","keyur"],
+["PR-001","1","CORE","Eve init","2","18","none","A","pr-001-eve-init","0","tbd","tbd","shreyash"],
+["PR-002","1","CORE","Photon channel texting","3","18","PR-000;PR-001","B","pr-002-photon-texting","0","tbd","tbd","shreyash"],
+["PR-003","1","CORE","Vercel deploy","2","15","PR-001","B","pr-003-vercel-deploy","0","tbd","tbd","shreyash"],
+["PR-004","1","CORE","Sibyl sidecar recall remember","3","20","none","A","pr-004-sibyl-recall-remember","0","tbd","tbd","keyur"],
+["PR-005","1","CORE","Base MCP connect skill","3","18","PR-001","C","pr-005-base-mcp-skill","0","tbd","tbd","keyur"],
+["PR-007","2","CORE","scaledBalanceOf read","2","14","PR-005","D","pr-007-scaled-balance","0","tbd","tbd","keyur"],
+["PR-008","2","CORE","Aerodrome quote via Sugar CLI","3","16","PR-001","E","pr-008-aerodrome-quote","0","tbd","tbd","keyur"],
+["PR-009","2","FEATURE","B20 custom plugin md","1","12","PR-001","E","pr-009-b20-plugin-md","0","tbd","tbd","keyur"],
+["PR-010","2","CORE","Sibyl search record routes","2","16","PR-004","D","pr-010-sibyl-search-record","0","tbd","tbd","keyur"],
+["PR-011","3","CORE","send_calls execute poll","4","20","PR-005;PR-008","F","pr-011-send-calls-exec","0","tbd","tbd","keyur"],
+["PR-012","3","CORE","USDC settlement path","3","18","PR-011","F","pr-012-usdc-settle","0","tbd","tbd","keyur"],
+["PR-013","3","FEATURE","Approval card link","2","14","PR-000;PR-011","G","pr-013-approval-card","0","tbd","tbd","shreyash"],
+["PR-014","3","FEATURE","Mini App portfolio approve-flip","4","20","PR-000;PR-013","G","pr-014-miniapp-portfolio","0","tbd","tbd","shreyash"],
+["PR-015","3","FEATURE","Tapback typing markdown","2","13","PR-002","H","pr-015-tapback-typing","0","tbd","tbd","shreyash"],
+["PR-016","3","FEATURE","Wallpaper traces","2","12","PR-002","H","pr-016-wallpaper-traces","0","tbd","tbd","shreyash"],
+["PR-017","4","FEATURE","Watchlist basis thesis memory","3","17","PR-010","I","pr-017-watchlist-memory","0","tbd","tbd","keyur"],
+["PR-018","4","FEATURE","Alerts schedule","3","16","PR-008;PR-017","I","pr-018-alerts-schedule","0","tbd","tbd","keyur"],
+["PR-019","4","FEATURE","Recap","2","14","PR-017","J","pr-019-recap","0","tbd","tbd","shreyash"],
+  ];
+  var prbody = document.getElementById("prbody");
+  var prcount = document.getElementById("prcount");
+  var fwave = document.getElementById("fwave");
+  var flabel = document.getElementById("flabel");
+  var fowner = document.getElementById("fowner");
+  var clearf = document.getElementById("clearf");
+
+  function cell(tr, text, cls, html) {
+    var td = document.createElement("td");
+    if (cls) td.className = cls;
+    if (html) td.innerHTML = html; else td.textContent = text;
+    tr.appendChild(td);
+    return td;
+  }
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+  function render(rows) {
+    prbody.innerHTML = "";
+    rows.forEach(function (f) {
+      var tr = document.createElement("tr");
+      tr.setAttribute("data-wave", f[1] || "");
+      tr.setAttribute("data-label", f[2] || "");
+      tr.setAttribute("data-owner", f[12] || "");
+      cell(tr, f[0], "");
+      cell(tr, f[1], "", '<span class="wv w' + esc(f[1]) + '">' + esc(f[1]) + "</span>");
+      cell(tr, f[2], "", '<span class="lb lb-' + esc(f[2].toLowerCase()) + '">' + esc(f[2]) + "</span>");
+      cell(tr, f[3] || "", "title");
+      cell(tr, f[4] || "", "");
+      cell(tr, f[5] || "", "");
+      cell(tr, f[6] || "", "dep");
+      cell(tr, f[7] || "", "");
+      cell(tr, f[8] || "", "branch");
+      cell(tr, f[9] || "", "");
+      cell(tr, f[12] || "", "", '<span class="own own-' + esc(f[12]) + '">' + esc(f[12]) + "</span>");
+      prbody.appendChild(tr);
+    });
+    applyFilters();
+  }
+  function applyFilters() {
+    var w = fwave.value.trim().toLowerCase();
+    var l = flabel.value.trim().toLowerCase();
+    var o = fowner.value.trim().toLowerCase();
+    var shown = 0, total = 0;
+    var rows = prbody.getElementsByTagName("tr");
+    for (var i = 0; i < rows.length; i++) {
+      var tr = rows[i];
+      total++;
+      var wv = tr.getAttribute("data-wave") || "";
+      var lb = tr.getAttribute("data-label") || "";
+      var ow = tr.getAttribute("data-owner") || "";
+      var ok = (w === "" || wv.toLowerCase().indexOf(w) !== -1) &&
+               (l === "" || lb.toLowerCase().indexOf(l) !== -1) &&
+               (o === "" || ow.toLowerCase().indexOf(o) !== -1);
+      tr.style.display = ok ? "" : "none";
+      if (ok) shown++;
+    }
+    prcount.textContent = "showing " + shown + "/" + total + " rows";
+  }
+  fwave.addEventListener("change", applyFilters);
+  flabel.addEventListener("change", applyFilters);
+  fowner.addEventListener("change", applyFilters);
+  clearf.addEventListener("click", function () { fwave.value = ""; flabel.value = ""; fowner.value = ""; applyFilters(); });
+
+  function parseTsv(text) {
+    var lines = text.split(/\r?\n/).filter(function (ln) { return ln.trim() !== ""; });
+    if (lines.length < 2) throw new Error("empty");
+    var head = lines[0].split("\t");
+    function idx(n) { return head.indexOf(n); }
+    var c = { id: idx("pr_id"), wave: idx("wave"), label: idx("label"), title: idx("title"),
+      cplx: idx("complexity_1_5"), est: idx("est_min"), dep: idx("depends_on"),
+      par: idx("parallel_group"), branch: idx("branch"), done: idx("completion_pct"),
+      note: idx("notes"), conf: idx("conflicts_issues"), own: idx("owner") };
+    if (c.id < 0 || c.wave < 0) throw new Error("bad header");
+    var out = [];
+    for (var i = 1; i < lines.length; i++) {
+      var f = lines[i].split("\t");
+      out.push([f[c.id] || "", f[c.wave] || "", f[c.label] || "", f[c.title] || "",
+        f[c.cplx] || "", f[c.est] || "", f[c.dep] || "", f[c.par] || "",
+        f[c.branch] || "", f[c.done] || "", f[c.note] || "", f[c.conf] || "", f[c.own] || ""]);
+    }
+    return out;
+  }
+
+  if (window.location.protocol === "file:") {
+    render(FALLBACK);
+  } else {
+    fetch("./pr.tsv").then(function (res) {
+      if (!res.ok) throw new Error("http " + res.status);
+      return res.text();
+    }).then(function (text) {
+      render(parseTsv(text));
+    }).catch(function () {
+      render(FALLBACK);
+    });
+  }
+})();
+</script>
+</body>
+</html>
