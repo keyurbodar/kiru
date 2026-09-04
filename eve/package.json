@@ -12,7 +12,6 @@
     "start": "tsx agent/index.ts"
   },
   "dependencies": {
-    "ai": "^7.0.82",
     "eve": "^0.51.1",
     "zod": "^4.0.0"
   },
