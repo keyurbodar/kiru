@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { defineTool } from "eve/tools";
 import { z } from "zod";
 
@@ -19,6 +19,12 @@ function loadInstructions(): string {
   return readFileSync(join(here, "..", "instructions.md"), "utf8");
 }
 
+export const agentEntrypoint = {
+  name: "kiru",
+  loadInstructions,
+  tools,
+};
+
 function main(): void {
   const instructions = loadInstructions();
   console.log("kiru agent booted");
@@ -26,4 +32,8 @@ function main(): void {
   console.log(`tools (${tools.length}): ${tools.map((t) => t.name).join(", ")}`);
 }
 
-main();
+const invokedDirectly =
+  process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href;
+if (invokedDirectly) {
+  main();
+}
