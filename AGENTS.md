@@ -80,8 +80,8 @@ Rule: the issue brief is the task. Read it before touching code.
 ## PR discipline
 
 - Issues #1-19 are the queue: 19 PRs, est 20 min or less, tests ride inside each PR.
-- Work from the issue. Branch per issue id (`pr-008-aerodrome-quote`),
-  conventional commits, squash-merge in wave order honoring Depends.
+- Work from the issue. Branch per issue with a slug name (`aerodrome-quote`
+  for #8), conventional commits, squash-merge in wave order honoring Depends.
 - On merge: close the issue.
 - Never make a GitHub PR unless I ask. Never push to `main` directly.
 
