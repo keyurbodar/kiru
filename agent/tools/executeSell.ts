@@ -1,13 +1,13 @@
 import { defineTool } from "eve/tools";
 import { always } from "eve/tools/approval";
-import { chainId, executeBuyInput, executeBuyOutput, type ExecuteBuyInput } from "../lib/contracts.js";
+import { chainId, executeSellInput, executeSellOutput, type ExecuteSellInput } from "../lib/contracts.js";
 import { checkFunds } from "../lib/funds.js";
 import { clearInFlight, markInFlight, recordFill } from "../lib/orderMemory.js";
-import { USDC, usdcToBase } from "../lib/routingQuote.js";
+import { NVDAC, nvdacToBase } from "../lib/routingQuote.js";
 import { buildSwapBody, checkApproval, fetchSwap } from "../lib/swap.js";
 
-// Submit a staged NVDAc quote through the Uniswap routing API on Base 8453
-// and Base MCP send_calls, then poll get_request_status to confirmed.
+// Submit a staged NVDAc sell quote through the Uniswap routing API on Base
+// 8453 and Base MCP send_calls, then poll get_request_status to confirmed.
 // Every run needs an explicit user yes in chat through approval always().
 // Decline, timeout, and failure exit clean with no partial retry.
 
@@ -34,8 +34,8 @@ interface PendingBody {
   quoteId?: unknown;
   side?: unknown;
   token?: unknown;
-  payUsdc?: unknown;
-  getTokens?: unknown;
+  payTokens?: unknown;
+  getUsdc?: unknown;
   expiresAt?: unknown;
   rawQuote?: unknown;
 }
@@ -168,10 +168,10 @@ function normStatus(raw: string): PollState {
 
 export default defineTool({
   description:
-    "Submit a staged NVDAc paper quote via the Uniswap routing API on Base and Base MCP send_calls, then poll get_request_status to confirmed. Fails closed when the quote is missing, mismatched, or expired.",
-  inputSchema: executeBuyInput,
+    "Submit a staged NVDAc sell paper quote via the Uniswap routing API on Base and Base MCP send_calls, then poll get_request_status to confirmed. Fails closed when the quote is missing, mismatched, or expired.",
+  inputSchema: executeSellInput,
   approval: always(),
-  async *execute(input: ExecuteBuyInput) {
+  async *execute(input: ExecuteSellInput) {
     const fail = (reason: string) => ({ ok: false as const, reason });
 
     const token = process.env.BASE_MCP_ACCESS_TOKEN;
@@ -198,7 +198,7 @@ export default defineTool({
       yield out;
       return out;
     }
-    if (pending.side !== undefined && pending.side !== "buy") {
+    if (pending.side !== "sell") {
       const out = fail("QUOTE_MISMATCH");
       yield out;
       return out;
@@ -218,7 +218,7 @@ export default defineTool({
       yield out;
       return out;
     }
-    const amountIn = typeof pending.payUsdc === "string" ? usdcToBase(pending.payUsdc) : null;
+    const amountIn = typeof pending.payTokens === "string" ? nvdacToBase(pending.payTokens) : null;
     if (amountIn === null) {
       const out = fail("NO_QUOTE");
       yield out;
@@ -231,7 +231,7 @@ export default defineTool({
       yield out;
       return out;
     }
-    const funds = await checkFunds({ rpcUrl, token: USDC, owner, needRaw: amountIn });
+    const funds = await checkFunds({ rpcUrl, token: NVDAC, owner, needRaw: amountIn });
     if (funds !== "ok") {
       const out = fail(funds === "short" ? "INSUFFICIENT_FUNDS" : "RPC_ERROR");
       yield out;
@@ -255,8 +255,8 @@ export default defineTool({
     const flight: Record<string, unknown> = {
       quoteId: input.quoteId,
       token: pending.token,
-      payUsdc: pending.payUsdc,
-      getTokens: pending.getTokens,
+      payTokens: pending.payTokens,
+      getUsdc: pending.getUsdc,
       to: swap.to,
       data: swap.data,
       value: swap.value,
@@ -287,7 +287,7 @@ export default defineTool({
       const wallets = resultFields(await callTool(session, "get_wallets", {}));
       const wallet = strField(wallets, ["address", "walletAddress", "account"]) ?? process.env.BASE_ACCOUNT_ADDRESS ?? "";
       if (wallet === "") throw new Error("no wallet address for check_approval");
-      const approval = await checkApproval(apiKey, { walletAddress: wallet, token: USDC, amount: amountIn.toString() });
+      const approval = await checkApproval(apiKey, { walletAddress: wallet, token: NVDAC, amount: amountIn.toString() });
       if (approval !== null && approval.chainId !== chainId) throw new Error("approval on wrong chain");
       const calls =
         approval === null
@@ -346,15 +346,15 @@ export default defineTool({
       await recordFill(input.tenantId, {
         quoteId: input.quoteId,
         token: pending.token,
-        side: "buy",
-        payUsdc: pending.payUsdc,
-        getTokens: pending.getTokens,
+        side: "sell",
+        payTokens: pending.payTokens,
+        getUsdc: pending.getUsdc,
         requestId,
         txHash,
         filledAt: new Date().toISOString(),
       });
       await clearInFlight(input.tenantId);
-      const parsed = executeBuyOutput.safeParse({
+      const parsed = executeSellOutput.safeParse({
         quoteId: input.quoteId,
         approvalUrl,
         requestId,
