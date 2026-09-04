@@ -7,12 +7,12 @@
     "node": ">=24"
   },
   "scripts": {
-    "build": "tsc --noEmit",
-    "dev": "tsx agent/index.ts",
-    "start": "tsx agent/index.ts"
+    "build": "eve build",
+    "dev": "tsx agent/agent.ts",
+    "start": "tsx agent/agent.ts",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "ai": "^7.0.82",
     "eve": "^0.51.1",
     "zod": "^4.0.0"
   },

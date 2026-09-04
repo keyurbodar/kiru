@@ -1,10 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "npm --prefix eve ci",
-  "buildCommand": "npm --prefix eve run build",
-  "functions": {
-    "eve/api/health.ts": {
-      "runtime": "nodejs24.x"
-    }
-  }
+  "installCommand": "npm ci --ignore-scripts",
+  "buildCommand": "npm run build"
 }
