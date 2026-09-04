@@ -50,7 +50,7 @@ Rule: the issue brief is the task. Read it before touching code.
 
 - Photon project `kiru` id `3d8ab560-41f6-4749-9d0e-49b4152aa396`, platform
   imessage on, free shared pool. Agent number `+14158505302`, assigned to
-  user Keyur Bodar (`keyurbodar16@gmail.com`, `+918490078179`).
+  the owner user (contact details shared out of band).
 - Secret lives in env (`PHOTON_PROJECT_ID`, project secret), shared out of
   band, never committed. `lines add` is Business-only; free tier provisions
   per-user shared numbers via `spectrum users add`, so don't touch lines.
