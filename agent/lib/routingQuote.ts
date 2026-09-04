@@ -12,10 +12,10 @@ const QUOTE_URL = "https://trade-api.gateway.uniswap.org/v1/quote";
 const QUOTE_TTL_MS = 30_000;
 
 export type QuoteResult =
-  | ({ ok: true } & QuoteBuyOutput)
+  | ({ ok: true } & QuoteBuyOutput & { rawQuote: Record<string, unknown> })
   | { ok: false; reason: "NO_CONFIG" | "RPC_ERROR" | "NO_QUOTE" };
 
-function usdcToBase(s: string): bigint | null {
+export function usdcToBase(s: string): bigint | null {
   const m = /^(\d+)(?:\.(\d{1,6}))?$/.exec(s);
   if (!m) return null;
   const v = BigInt(m[1]) * 1_000_000n + BigInt((m[2] ?? "").padEnd(6, "0"));
@@ -79,20 +79,22 @@ export async function quoteUsdcToNvdac(usdcAmount: string): Promise<QuoteResult>
     return { ok: false, reason: "RPC_ERROR" };
   }
   if (!res.ok) return { ok: false, reason: "NO_QUOTE" };
-  let body: { quote?: RoutingQuote };
+  let raw: Record<string, unknown>;
   try {
-    body = (await res.json()) as typeof body;
+    raw = (await res.json()) as Record<string, unknown>;
   } catch {
     return { ok: false, reason: "NO_QUOTE" };
   }
-  const amountOut = parseOut(body.quote?.output?.amount);
+  const inner = raw.quote;
+  const venue = (typeof inner === "object" && inner !== null ? inner : raw) as RoutingQuote;
+  const amountOut = parseOut(venue.output?.amount);
   if (amountOut <= 0n) return { ok: false, reason: "NO_QUOTE" };
   const getTokens = formatUnits(amountOut, NVDAC_DECIMALS, 8);
   if (getTokens === "0") return { ok: false, reason: "NO_QUOTE" };
   const priceUsdc = formatUnits((amountIn * 10n ** BigInt(NVDAC_DECIMALS)) / amountOut, 6, 6);
-  const feeRaw = typeof body.quote?.gasFeeUSD === "string" ? truncUsd(body.quote.gasFeeUSD) : null;
-  const venueId = typeof body.quote?.quoteId === "string" ? body.quote.quoteId : "";
-  return quoteBuyOutput.parse({
+  const feeRaw = typeof venue.gasFeeUSD === "string" ? truncUsd(venue.gasFeeUSD) : null;
+  const venueId = typeof venue.quoteId === "string" ? venue.quoteId : "";
+  const parsed = quoteBuyOutput.parse({
     quoteId: venueId.length > 0 && venueId.length <= 64 ? venueId : `q_${Date.now().toString(36)}_${randomBytes(8).toString("hex")}`,
     token: "NVDAc",
     priceUsdc,
@@ -101,14 +103,16 @@ export async function quoteUsdcToNvdac(usdcAmount: string): Promise<QuoteResult>
     feeUsdc: feeRaw ?? "0",
     expiresAt: new Date(Date.now() + QUOTE_TTL_MS).toISOString(),
     paper: true,
-  }) as QuoteResult;
+  });
+  return { ...parsed, ok: true as const, rawQuote: raw };
 }
 
-// Stage the quote HOT as pending_quote. Best effort: a memory failure never
-// fails the quote itself.
+// Stage the quote HOT as pending_quote, display fields plus rawQuote so execute
+// can rebuild the /swap body. Best effort: a memory failure never fails the
+// quote itself.
 export async function stagePendingQuote(
   tenantId: string,
-  quote: QuoteBuyOutput,
+  quote: QuoteBuyOutput & { rawQuote: Record<string, unknown> },
 ): Promise<boolean> {
   const base = process.env.SIBYL_SIDECAR_URL ?? "http://localhost:8000";
   try {
