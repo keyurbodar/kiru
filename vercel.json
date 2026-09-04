@@ -1,5 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "npm --prefix eve ci",
+  "installCommand": "npm --prefix eve ci --ignore-scripts",
   "buildCommand": "npm --prefix eve run build"
 }

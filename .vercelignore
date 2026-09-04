@@ -1,0 +1,4 @@
+eve/node_modules
+node_modules
+sibyl-sidecar/memory.db
+*.db
