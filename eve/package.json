@@ -1,0 +1,24 @@
+{
+  "name": "kiru",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "dev": "tsx agent/index.ts",
+    "start": "tsx agent/index.ts"
+  },
+  "dependencies": {
+    "ai": "^7.0.82",
+    "eve": "^0.51.1",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}
