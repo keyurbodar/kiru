@@ -7,7 +7,7 @@
     "node": ">=24"
   },
   "scripts": {
-    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "dev": "tsx agent/index.ts",
     "start": "tsx agent/index.ts"
   },

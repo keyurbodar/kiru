@@ -1,7 +1,10 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { createRequire } from "node:module";
-import { agentEntrypoint } from "../agent/index";
 
+// Framework-free on purpose. Importing the agent entrypoint here pulls
+// eve/tools into the serverless bundle, which Vercel file tracing cannot
+// package. The entrypoint stays exported from agent/index.ts for the
+// Photon channel, which runs where the framework resolves.
 const require = createRequire(import.meta.url);
 const { version } = require("../package.json") as { version: string };
 
@@ -16,5 +19,5 @@ export default function handler(req: IncomingMessage, res: ServerResponse): void
     res.end(JSON.stringify({ error: "method not allowed" }));
     return;
   }
-  sendJson(res, 200, { status: agentEntrypoint ? "ok" : "error", version });
+  sendJson(res, 200, { status: "ok", version });
 }
