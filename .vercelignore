@@ -1,4 +1,6 @@
-eve/node_modules
 node_modules
+.eve
+.output
+.vercel
 sibyl-sidecar/memory.db
 *.db
