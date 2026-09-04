@@ -27,3 +27,21 @@ Planned contract, not built yet. These commands are the contract for every featu
 - Keep user texts exact across files. If `buy $40 of NVDAc` is the example in quote.md, approve.md starts from that same text.
 - Venue quote is the price. No second price source gates an order.
 - Paper default everywhere until live trading is enabled. Cards read `paper` and nothing moves onchain.
+
+## Landing plan
+
+Skeleton lands with #1 so both lanes verify from day one. Each later PR
+extends the CLI it touches and proves itself through it. A command with no
+PR using it does not get built.
+
+| Command | Proves | Lands with | Owner |
+|---|---|---|---|
+| `doctor` | Eve dev, Photon project, Sibyl sidecar, RPC alive | #1 | keyur |
+| `sibyl-roundtrip` | remember, recall, search on the sidecar | #1 | keyur |
+| `quote-paper` | Sugar dry-run prints the card, no money moves | #1 | keyur |
+| `eve-boot` | dev boots, channel registered | #2 | shreyash |
+| `thread` | text to sandbox thread, print Eve reply | #3 | shreyash |
+| `send-test` | paper approval to poll, proves the loop | #11 | keyur |
+| `receipt` | Basescan confirm, renders receipt text | #11 | keyur |
+| `card` | Mini App route renders, screenshot the card | #14 | shreyash |
+| `alert-dryrun` | alert fires without texting | #18 | keyur |
