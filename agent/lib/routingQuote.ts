@@ -1,13 +1,11 @@
 import { randomBytes } from "node:crypto";
 import { quoteBuyOutput, quoteSellOutput, type QuoteBuyOutput, type QuoteSellOutput } from "./contracts.js";
 
-// Uniswap routing API venue quote: USDC -> NVDAc on Base (chain 8453).
+// Uniswap routing API venue quote: USDC -> venue token on Base (chain 8453).
 // POST /v1/quote is the price. A response with no route means no quote,
 // never a guess. Key and swapper stay in env, never in the diff.
-
 export const USDC = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
-export const NVDAC = "0xb20000000000000000000078ee7ce2fE4908108C";
-export const NVDAC_DECIMALS = 8;
+
 const QUOTE_URL = "https://trade-api.gateway.uniswap.org/v1/quote";
 const QUOTE_TTL_MS = 30_000;
 
@@ -61,7 +59,10 @@ interface RoutingQuote {
   quoteId?: unknown;
 }
 
-export async function quoteUsdcToNvdac(usdcAmount: string): Promise<QuoteResult> {
+export async function quoteUsdcToToken(
+  usdcAmount: string,
+  token: { symbol: string; address: string; decimals: number },
+): Promise<QuoteResult> {
   const key = process.env.UNISWAP_API_KEY;
   const swapper = process.env.KIRU_SWAPPER;
   if (!key || !swapper) return { ok: false, reason: "NO_CONFIG" };
@@ -76,7 +77,7 @@ export async function quoteUsdcToNvdac(usdcAmount: string): Promise<QuoteResult>
         type: "EXACT_INPUT",
         amount: amountIn.toString(),
         tokenIn: USDC,
-        tokenOut: NVDAC,
+        tokenOut: token.address,
         tokenInChainId: 8453,
         tokenOutChainId: 8453,
         swapper,
@@ -100,14 +101,14 @@ export async function quoteUsdcToNvdac(usdcAmount: string): Promise<QuoteResult>
   const venue = (typeof inner === "object" && inner !== null ? inner : raw) as RoutingQuote;
   const amountOut = parseOut(venue.output?.amount);
   if (amountOut <= 0n) return { ok: false, reason: "NO_QUOTE" };
-  const getTokens = formatUnits(amountOut, NVDAC_DECIMALS, 8);
+  const getTokens = formatUnits(amountOut, token.decimals, 8);
   if (getTokens === "0") return { ok: false, reason: "NO_QUOTE" };
-  const priceUsdc = formatUnits((amountIn * 10n ** BigInt(NVDAC_DECIMALS)) / amountOut, 6, 6);
+  const priceUsdc = formatUnits((amountIn * 10n ** BigInt(token.decimals)) / amountOut, 6, 6);
   const feeRaw = typeof venue.gasFeeUSD === "string" ? truncUsd(venue.gasFeeUSD) : null;
   const venueId = typeof venue.quoteId === "string" ? venue.quoteId : "";
   const parsed = quoteBuyOutput.parse({
     quoteId: venueId.length > 0 && venueId.length <= 64 ? venueId : `q_${Date.now().toString(36)}_${randomBytes(8).toString("hex")}`,
-    token: "NVDAc",
+    token: token.symbol,
     priceUsdc,
     payUsdc: usdcAmount,
     getTokens,
