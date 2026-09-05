@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { defaultPhotonAuth, photonIMessageChannel } from "eve/channels/photon";
 import { approvalUrl, quoteBuyOutput, tenantId, type QuoteBuyOutput } from "../lib/contracts.js";
 
@@ -61,6 +62,40 @@ export function dispatchInbound(sender: unknown, text: unknown, isBot: boolean) 
     context: [buildEchoContext(tenant.data, text)],
     title: `iMessage from ${tenant.data}`,
   };
+}
+
+export interface ChannelSpan {
+  traceId: string;
+  name: "receive" | "tool-call" | "reply-send";
+  tenant: string;
+  thread: string;
+}
+
+const wallpapers = new Map<string, string>();
+
+function defaultWallpaper(): string {
+  return process.env.WALLPAPER_DEFAULT ?? "sage";
+}
+
+export function wallpaperFor(sender: unknown): string {
+  if (typeof sender !== "string") return defaultWallpaper();
+  return wallpapers.get(sender) ?? defaultWallpaper();
+}
+
+export function setWallpaper(sender: unknown, name: string): boolean {
+  const tenant = tenantId.safeParse(sender);
+  if (!tenant.success || name.length === 0) return false;
+  wallpapers.set(tenant.data, name);
+  return true;
+}
+
+export function traceMessage(tenant: string, thread: string, traceId: string = randomUUID()): ChannelSpan[] {
+  return (["receive", "tool-call", "reply-send"] as const).map((name) => ({ traceId, name, tenant, thread }));
+}
+
+export function otelEndpoint(): string | null {
+  const url = process.env.OTEL_EXPORTER_OTLP_ENDPOINT;
+  return url === undefined || url === "" ? null : url;
 }
 
 export default photonIMessageChannel({
