@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { defaultPhotonAuth, photonIMessageChannel } from "eve/channels/photon";
 import { approvalUrl, quoteBuyOutput, tenantId, type QuoteBuyOutput } from "../lib/contracts.js";
 
@@ -77,6 +78,66 @@ export function formatDeclineReceipt(token: string): string {
 
 export function formatErrorReceipt(token: string): string {
   return `No quote for ${token} right now, illiquid on venue. Try again later.`;
+export interface ChannelSpan {
+  traceId: string;
+  name: "receive" | "tool-call" | "reply-send";
+  tenant: string;
+  thread: string;
+}
+
+function defaultWallpaper(): string {
+  return process.env.WALLPAPER_DEFAULT ?? "sage";
+}
+
+function sidecarBase(): string {
+  return process.env.SIBYL_SIDECAR_URL ?? "http://localhost:8000";
+}
+
+export async function wallpaperFor(sender: unknown): Promise<string> {
+  const tenant = tenantId.safeParse(sender);
+  if (!tenant.success) return defaultWallpaper();
+  try {
+    const res = await fetch(`${sidecarBase()}/recall`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ tenant_id: tenant.data, category: "prefs", name: "wallpaper" }),
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!res.ok) return defaultWallpaper();
+    const body = (await res.json()) as { ok?: boolean; entity?: { body?: { name?: unknown } } };
+    const name = body.ok === true ? body.entity?.body?.name : undefined;
+    return typeof name === "string" && name.length > 0 ? name : defaultWallpaper();
+  } catch {
+    return defaultWallpaper();
+  }
+}
+
+export async function setWallpaper(sender: unknown, name: string): Promise<boolean> {
+  const tenant = tenantId.safeParse(sender);
+  if (!tenant.success || name.length === 0) return false;
+  try {
+    const res = await fetch(`${sidecarBase()}/remember`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ tenant_id: tenant.data, category: "prefs", name: "wallpaper", body: { name } }),
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!res.ok) return false;
+    const body = (await res.json()) as { ok?: boolean };
+    return body.ok === true;
+  } catch {
+    return false;
+  }
+}
+
+export function traceMessage(tenant: string, thread: string, traceId: string = randomUUID()): ChannelSpan[] {
+  return (["receive", "tool-call", "reply-send"] as const).map((name) => ({ traceId, name, tenant, thread }));
+}
+
+export function otelEndpoint(): string | null {
+  const url = process.env.OTEL_EXPORTER_OTLP_ENDPOINT;
+  return url === undefined || url === "" ? null : url;
+}
 }
 
 export default photonIMessageChannel({
