@@ -29,9 +29,9 @@ export function buildApprovalCard(quote: QuoteBuyOutput, url: string): string | 
 }
 
 export function routeApprovalReply(text: string): "approve" | "decline" | null {
-  const first = text.trim().toLowerCase().split(/[^a-z]+/)[0] ?? "";
-  if (["approve", "approved", "yes", "yep", "confirm", "confirmed"].includes(first)) return "approve";
-  if (["decline", "declined", "no", "nope", "cancel", "cancelled", "stop"].includes(first)) return "decline";
+  const word = text.trim().toLowerCase().replace(/[.?!]+$/, "");
+  if (["approve", "approved", "yes", "yep", "confirm", "confirmed"].includes(word)) return "approve";
+  if (["decline", "declined", "no", "nope", "cancel", "cancelled", "stop"].includes(word)) return "decline";
   return null;
 }
 
