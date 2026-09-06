@@ -63,12 +63,33 @@ export function dispatchInbound(sender: unknown, text: unknown, isBot: boolean) 
   };
 }
 
+export function tapbackFor(kind: "order" | "fill"): "like" | "love" {
+  return kind === "fill" ? "love" : "like";
+}
+
+export function formatFillReceipt(token: string, shares: string, payUsdc: string): string {
+  return `Filled: *${shares} ${token}* for *$${payUsdc} USDC*. Held in your Base Account.`;
+}
+
+export function formatDeclineReceipt(token: string): string {
+  return `Cancelled your pending ${token} quote. Nothing moved. Text a new order anytime.`;
+}
+
+export function formatErrorReceipt(token: string): string {
+  return `No quote for ${token} right now, illiquid on venue. Try again later.`;
+}
+
 export default photonIMessageChannel({
   credentials: readCredentials,
   webhookSecret: process.env.IMESSAGE_WEBHOOK_SECRET,
   onMessage(_ctx, message) {
     const decision = dispatchInbound(message.author.userId, message.text, message.author.isBot);
     if (!decision) return null;
+    try {
+      void message.react(tapbackFor("order"));
+    } catch {
+      // Ack tapback is best effort. Dispatch continues without it.
+    }
     return { auth: defaultPhotonAuth(message), ...decision };
   },
 });
