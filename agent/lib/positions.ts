@@ -1,21 +1,15 @@
+import { resolveToken } from "./tokens.js";
 import { getPositionOutput, type GetPositionOutput } from "./contracts.js";
 
 export const chainId = 8453;
-
-export const venueTokens: Record<string, `0x${string}`> = {
-  NVDAc: "0xb20000000000000000000078ee7ce2fE4908108C",
-};
-
 const scaledBalanceOf = "0x1da24f3e";
 const balanceOf = "0x70a08231";
 const decimalsFn = "0x313ce567";
 
-export function resolveVenueToken(symbol: string): { symbol: string; address: `0x${string}` } | null {
-  const exact = venueTokens[symbol];
-  if (exact !== undefined) return { symbol, address: exact };
-  const hit = Object.entries(venueTokens).find(([name]) => name.toLowerCase() === symbol.toLowerCase());
-  if (hit === undefined) return null;
-  return { symbol: hit[0], address: hit[1] };
+export async function resolveVenueToken(symbol: string, rpcUrl?: string): Promise<{ symbol: string; address: `0x${string}` } | null> {
+  const ref = await resolveToken(symbol, rpcUrl);
+  if (ref === null) return null;
+  return { symbol: ref.symbol, address: ref.address };
 }
 
 async function ethCall(rpcUrl: string, to: string, data: string): Promise<bigint | null> {
@@ -107,7 +101,7 @@ export async function getPositionFor(args: {
   symbol: string;
   owner: string;
 }): Promise<GetPositionOutput> {
-  const venue = resolveVenueToken(args.symbol);
+  const venue = await resolveVenueToken(args.symbol, args.rpcUrl);
   if (venue === null) throw new Error(`No venue listing for ${args.symbol}: outside venue, no read attempted.`);
   if (!/^0x[0-9a-fA-F]{40}$/.test(args.owner)) {
     throw new Error("No Base Account address on file for this tenant, refusing to guess a balance.");
