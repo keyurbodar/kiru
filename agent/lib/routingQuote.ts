@@ -9,6 +9,8 @@ export const USDC = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 const QUOTE_URL = "https://trade-api.gateway.uniswap.org/v1/quote";
 const QUOTE_TTL_MS = 30_000;
 
+export const NVDAC = "0xb20000000000000000000078ee7ce2fE4908108C";
+export const NVDAC_DECIMALS = 8;
 export type QuoteResult =
   | ({ ok: true } & QuoteBuyOutput & { rawQuote: Record<string, unknown> })
   | { ok: false; reason: "NO_CONFIG" | "RPC_ERROR" | "NO_QUOTE" };
