@@ -55,6 +55,38 @@ export const executeBuyOutput = z.object({
   txHash: z.string().nullable(),
 });
 
+export const quoteSellInput = z.object({
+  tenantId,
+  token: tokenSymbol,
+  tokenAmount,
+});
+
+export const quoteSellOutput = z.object({
+  quoteId,
+  token: tokenSymbol,
+  priceUsdc: usdcAmount,
+  payTokens: tokenAmount,
+  getUsdc: usdcAmount,
+  feeUsdc: usdcAmount,
+  expiresAt: z.string().datetime(),
+  paper: z.literal(true),
+});
+
+export const executeSellInput = z.object({
+  tenantId,
+  quoteId,
+});
+
+export const executeSellStatus = z.enum(["confirmed", "declined", "timed_out", "failed"]);
+
+export const executeSellOutput = z.object({
+  quoteId,
+  approvalUrl,
+  requestId,
+  status: executeSellStatus,
+  txHash: z.string().nullable(),
+});
+
 export const quoteBuy = {
   input: quoteBuyInput,
   output: quoteBuyOutput,
@@ -70,9 +102,24 @@ export const executeBuy = {
   output: executeBuyOutput,
 } as const;
 
+export const quoteSell = {
+  input: quoteSellInput,
+  output: quoteSellOutput,
+} as const;
+
+export const executeSell = {
+  input: executeSellInput,
+  output: executeSellOutput,
+} as const;
+
 export type QuoteBuyInput = z.infer<typeof quoteBuyInput>;
 export type QuoteBuyOutput = z.infer<typeof quoteBuyOutput>;
 export type GetPositionInput = z.infer<typeof getPositionInput>;
 export type GetPositionOutput = z.infer<typeof getPositionOutput>;
 export type ExecuteBuyInput = z.infer<typeof executeBuyInput>;
 export type ExecuteBuyOutput = z.infer<typeof executeBuyOutput>;
+
+export type QuoteSellInput = z.infer<typeof quoteSellInput>;
+export type QuoteSellOutput = z.infer<typeof quoteSellOutput>;
+export type ExecuteSellInput = z.infer<typeof executeSellInput>;
+export type ExecuteSellOutput = z.infer<typeof executeSellOutput>;
