@@ -78,6 +78,7 @@ export function formatDeclineReceipt(token: string): string {
 
 export function formatErrorReceipt(token: string): string {
   return `No quote for ${token} right now, illiquid on venue. Try again later.`;
+}
 export interface ChannelSpan {
   traceId: string;
   name: "receive" | "tool-call" | "reply-send";
@@ -137,7 +138,6 @@ export function traceMessage(tenant: string, thread: string, traceId: string = r
 export function otelEndpoint(): string | null {
   const url = process.env.OTEL_EXPORTER_OTLP_ENDPOINT;
   return url === undefined || url === "" ? null : url;
-}
 }
 
 export default photonIMessageChannel({
