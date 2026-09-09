@@ -4,7 +4,7 @@ import { getPositionFor } from "../lib/positions.js";
 
 export default defineTool({
   description:
-    "Onchain share balance for a venue token on Base 8453 with the remembered average cost. Unknown symbols refuse without reading.",
+    "Onchain share balance for a venue token on Base 8453 with the remembered average cost, watchlist flag, and thesis. Unknown symbols refuse without reading.",
   inputSchema: getPositionInput,
   async execute(input) {
     const rpcUrl = process.env.BASE_RPC_URL;
