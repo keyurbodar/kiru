@@ -61,7 +61,7 @@ export async function checkAlerts(tenantId: string): Promise<string[]> {
 }
 
 export default defineSchedule({
-  cron: "*/5 * * * *",
+  cron: "0 9 * * *",
   async run({ to }) {
     const tenant = process.env.ALERT_TENANT ?? process.env.TELEGRAM_CHAT_ID ?? "";
     if (!tenant) return;
