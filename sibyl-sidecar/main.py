@@ -41,6 +41,9 @@ CREATE VIRTUAL TABLE IF NOT EXISTS search_fts USING fts5(
 );
 """
 
+# WARM entity shape for #17: one record per token under category "positions"
+# name "<TOKEN>" body {shares, avg_cost_usdc, watchlisted, thesis}
+# HOT state holds pending_quote/order_in_flight, COLD journal holds fills.
 TIERS = ("entity", "state", "reference", "journal")
 
 app = FastAPI()

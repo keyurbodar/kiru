@@ -2,7 +2,7 @@ import { defineTool } from "eve/tools";
 import { always } from "eve/tools/approval";
 import { chainId, executeBuyInput, executeBuyOutput, type ExecuteBuyInput } from "../lib/contracts.js";
 import { checkFunds } from "../lib/funds.js";
-import { clearInFlight, markInFlight, recordFill } from "../lib/orderMemory.js";
+import { clearInFlight, markInFlight, recordFill, rememberPosition } from "../lib/orderMemory.js";
 import { USDC, usdcToBase } from "../lib/routingQuote.js";
 import { buildSwapBody, checkApproval, fetchSwap } from "../lib/swap.js";
 
@@ -353,6 +353,35 @@ export default defineTool({
         txHash,
         filledAt: new Date().toISOString(),
       });
+      const filledShares = typeof pending.getTokens === "string" ? pending.getTokens : "0";
+      const filledPrice = (() => {
+        const pay = Number(pending.payUsdc);
+        const got = Number(pending.getTokens);
+        if (!Number.isFinite(pay) || !Number.isFinite(got) || got === 0) return "0";
+        return (pay / got).toFixed(2);
+      })();
+      try {
+        const base = process.env.SIBYL_SIDECAR_URL ?? "http://localhost:8000";
+        const rec = await fetch(`${base}/recall`, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ tenant_id: input.tenantId, category: "positions", name: pending.token }),
+          signal: AbortSignal.timeout(8000),
+        })
+          .then((r) => r.json())
+          .catch(() => null) as { ok?: boolean; entity?: { body?: { shares?: string; avg_cost_usdc?: string } } } | null;
+        const curShares = Number(rec?.entity?.body?.shares ?? "0");
+        const curAvg = Number(rec?.entity?.body?.avg_cost_usdc ?? "0");
+        const addShares = Number(filledShares);
+        const newShares = curShares + addShares;
+        const newAvg = newShares === 0 ? filledPrice : ((curShares * curAvg + addShares * Number(filledPrice)) / newShares).toFixed(2);
+        await rememberPosition(input.tenantId, String(pending.token), {
+          shares: String(newShares),
+          avgCostUsdc: newAvg,
+        });
+      } catch {
+        // Best effort: COLD record already succeeded.
+      }
       await clearInFlight(input.tenantId);
       const parsed = executeBuyOutput.safeParse({
         quoteId: input.quoteId,
